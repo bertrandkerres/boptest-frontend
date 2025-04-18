@@ -72,6 +72,23 @@ export type TimeSeries = {
     [key: string]: Array<number>;
 };
 
+export type StandardResponse = {
+    /**
+     * A message describing the response.
+     */
+    message?: string;
+    /**
+     * The response payload.
+     */
+    payload?: {
+        [key: string]: unknown;
+    };
+    /**
+     * HTTP status code.
+     */
+    status?: number;
+};
+
 export type GetInputsData = {
     body?: never;
     path?: never;
@@ -83,7 +100,11 @@ export type GetInputsResponses = {
     /**
      * Successful response with metadata for inputs.
      */
-    200: BoundedSignalMetaResponse;
+    200: {
+        message?: string;
+        payload?: BoundedSignalMetaResponse;
+        status?: number;
+    };
 };
 
 export type GetInputsResponse = GetInputsResponses[keyof GetInputsResponses];
@@ -99,7 +120,11 @@ export type GetMeasurementsResponses = {
     /**
      * Successful response with metadata for measurements.
      */
-    200: BoundedSignalMetaResponse;
+    200: {
+        message?: string;
+        payload?: BoundedSignalMetaResponse;
+        status?: number;
+    };
 };
 
 export type GetMeasurementsResponse = GetMeasurementsResponses[keyof GetMeasurementsResponses];
@@ -115,7 +140,11 @@ export type GetForecastPointsResponses = {
     /**
      * Successful response with metadata for forecast points.
      */
-    200: SignalMetaResponse;
+    200: {
+        message?: string;
+        payload?: SignalMetaResponse;
+        status?: number;
+    };
 };
 
 export type GetForecastPointsResponse = GetForecastPointsResponses[keyof GetForecastPointsResponses];
@@ -131,7 +160,11 @@ export type PutForecastResponses = {
     /**
      * Successful response with forecast time series.
      */
-    200: TimeSeries;
+    200: {
+        message?: string;
+        payload?: TimeSeries;
+        status?: number;
+    };
 };
 
 export type PutForecastResponse = PutForecastResponses[keyof PutForecastResponses];
@@ -147,7 +180,11 @@ export type PutResultsResponses = {
     /**
      * Successful response with results time series.
      */
-    200: TimeSeries;
+    200: {
+        message?: string;
+        payload?: TimeSeries;
+        status?: number;
+    };
 };
 
 export type PutResultsResponse = PutResultsResponses[keyof PutResultsResponses];
@@ -166,7 +203,11 @@ export type PostAdvanceResponses = {
      * Successful response with simulation advancement results.
      */
     200: {
-        [key: string]: number;
+        message?: string;
+        payload?: {
+            [key: string]: number;
+        };
+        status?: number;
     };
 };
 
@@ -181,9 +222,16 @@ export type GetStepData = {
 
 export type GetStepResponses = {
     /**
-     * The time step used in the simulation.
+     * Successful response with the time step.
      */
-    200: number;
+    200: {
+        message?: string;
+        /**
+         * The time step used in the simulation.
+         */
+        payload?: number;
+        status?: number;
+    };
 };
 
 export type GetStepResponse = GetStepResponses[keyof GetStepResponses];
@@ -202,9 +250,16 @@ export type PutStepData = {
 
 export type PutStepResponses = {
     /**
-     * Confirmation message.
+     * Successful response indicating the time step was updated.
      */
-    200: string;
+    200: {
+        message?: string;
+        /**
+         * Confirmation message.
+         */
+        payload?: string;
+        status?: number;
+    };
 };
 
 export type PutStepResponse = PutStepResponses[keyof PutStepResponses];
@@ -221,7 +276,11 @@ export type GetScenarioResponses = {
      * Successful response with the scenario description.
      */
     200: {
-        [key: string]: string;
+        message?: string;
+        payload?: {
+            [key: string]: string;
+        };
+        status?: number;
     };
 };
 
@@ -239,7 +298,11 @@ export type GetKpiResponses = {
      * Successful response with the KPIs.
      */
     200: {
-        [key: string]: number;
+        message?: string;
+        payload?: {
+            [key: string]: number;
+        };
+        status?: number;
     };
 };
 
@@ -263,9 +326,16 @@ export type PutInitializeData = {
 
 export type PutInitializeResponses = {
     /**
-     * Confirmation message.
+     * Successful response indicating the simulation was initialized.
      */
-    200: string;
+    200: {
+        message?: string;
+        /**
+         * Confirmation message.
+         */
+        payload?: string;
+        status?: number;
+    };
 };
 
 export type PutInitializeResponse = PutInitializeResponses[keyof PutInitializeResponses];

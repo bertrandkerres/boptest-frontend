@@ -78,6 +78,18 @@ components:
         type: array
         items:
           type: number
+    StandardResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message describing the response.
+        payload:
+          type: object
+          description: The response payload.
+        status:
+          type: integer
+          description: HTTP status code.
 paths:
   /inputs:
     get:
@@ -89,7 +101,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoundedSignalMetaResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Metadata for inputs retrieved successfully."
+                  payload:
+                    $ref: '#/components/schemas/BoundedSignalMetaResponse'
+                  status:
+                    type: integer
+                    example: 200
   /measurements:
     get:
       summary: Get metadata for measurements
@@ -100,7 +121,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoundedSignalMetaResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Metadata for measurements retrieved successfully."
+                  payload:
+                    $ref: '#/components/schemas/BoundedSignalMetaResponse'
+                  status:
+                    type: integer
+                    example: 200
   /forecast_points:
     get:
       summary: Get metadata for forecast points
@@ -111,7 +141,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignalMetaResponse'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Metadata for forecast points retrieved successfully."
+                  payload:
+                    $ref: '#/components/schemas/SignalMetaResponse'
+                  status:
+                    type: integer
+                    example: 200
   /forecast:
     put:
       summary: Submit a forecast query
@@ -128,7 +167,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimeSeries'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Forecast query processed successfully."
+                  payload:
+                    $ref: '#/components/schemas/TimeSeries'
+                  status:
+                    type: integer
+                    example: 200
   /results:
     put:
       summary: Submit a results query
@@ -145,7 +193,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimeSeries'
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Results query processed successfully."
+                  payload:
+                    $ref: '#/components/schemas/TimeSeries'
+                  status:
+                    type: integer
+                    example: 200
   /advance:
     post:
       summary: Advance the simulation
@@ -170,9 +227,18 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: number
-                  description: Resulting values after advancing the simulation.
+                properties:
+                  message:
+                    type: string
+                    example: "Simulation advanced successfully."
+                  payload:
+                    type: object
+                    additionalProperties:
+                      type: number
+                      description: Resulting values after advancing the simulation.
+                  status:
+                    type: integer
+                    example: 200
   /step:
     get:
       summary: Get the simulation time step
@@ -183,8 +249,17 @@ paths:
           content:
             application/json:
               schema:
-                type: number
-                description: The time step used in the simulation.
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Simulation time step retrieved successfully."
+                  payload:
+                    type: number
+                    description: The time step used in the simulation.
+                  status:
+                    type: integer
+                    example: 200
     put:
       summary: Set the simulation time step
       description: Sets the time step used in the simulation.
@@ -204,8 +279,17 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                description: Confirmation message.
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Simulation time step updated successfully."
+                  payload:
+                    type: string
+                    description: Confirmation message.
+                  status:
+                    type: integer
+                    example: 200
   /scenario:
     get:
       summary: Get the current scenario description
@@ -217,9 +301,18 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: string
-                  description: Key-value pairs describing the current scenario.
+                properties:
+                  message:
+                    type: string
+                    example: "Scenario description retrieved successfully."
+                  payload:
+                    type: object
+                    additionalProperties:
+                      type: string
+                      description: Key-value pairs describing the current scenario.
+                  status:
+                    type: integer
+                    example: 200
   /kpi:
     get:
       summary: Get the Key Performance Indicators (KPIs)
@@ -231,9 +324,18 @@ paths:
             application/json:
               schema:
                 type: object
-                additionalProperties:
-                  type: number
-                  description: Key-value pairs of KPI names and their values.
+                properties:
+                  message:
+                    type: string
+                    example: "KPIs retrieved successfully."
+                  payload:
+                    type: object
+                    additionalProperties:
+                      type: number
+                      description: Key-value pairs of KPI names and their values.
+                  status:
+                    type: integer
+                    example: 200
   /initialize:
     put:
       summary: Initialize the simulation
@@ -257,5 +359,14 @@ paths:
           content:
             application/json:
               schema:
-                type: string
-                description: Confirmation message.
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Simulation initialized successfully."
+                  payload:
+                    type: string
+                    description: Confirmation message.
+                  status:
+                    type: integer
+                    example: 200
