@@ -1,38 +1,44 @@
+"use client";
+
 import {
   Box,
   ClientOnly,
   HStack,
   Skeleton,
 } from "@chakra-ui/react";
-import { ColorModeToggle } from "../components/ui/color-mode-toggle";
+import { useEffect, useState } from "react";
 import ParentVariableSelection from "@/components/ParentVariableSelection";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
+import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
+import { fetchForecastData, ForecastData } from "@/lib/fetchForecastData";
 
-export default async function Page() {
-  // Example time series data
-  const exampleData = [
-    {
-      name: "Temperature",
-      x: [0, 1, 2, 3, 4], // Time values
-      y: [20, 21, 19, 22, 30], // Temperature values
-    },
-    {
-      name: "Humidity",
-      x: [0, 1, 2, 3, 4], // Time values
-      y: [50, 55, 53, 52, 54], // Humidity values
-    },
-  ];
+
+export default function Page() {
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+
+  useEffect(() => {
+    const loadForecastData = async () => {
+      const data = await fetchForecastData(["LowerSetp[1]", "UpperSetp[1]"]);
+      setForecastData(data);
+    };
+
+    loadForecastData();
+  }, []);
 
   return (
     <>
       <HStack align="start" gap={0}>
         <ParentVariableSelection />
         <Box flex="1" p={4}>
-          <TimeSeriesPlot
-            title="Example Time Series"
-            data={exampleData}
-            yAxisLabel="Value"
-          />
+          {forecastData.length > 0 ? (
+            <TimeSeriesPlot
+              title="Forecast Time Series"
+              data={forecastData}
+              yAxisLabel="Value"
+            />
+          ) : (
+            <Skeleton height="400px" />
+          )}
         </Box>
       </HStack>
       <Box pos="absolute" top="4" right="4">
