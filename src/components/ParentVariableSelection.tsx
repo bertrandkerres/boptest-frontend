@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { HStack, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import VariableSelection from "./VariableSelection";
 import { getMeasurements, getInputs, getForecastPoints } from "../client/sdk.gen";
 
