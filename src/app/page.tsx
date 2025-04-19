@@ -8,11 +8,10 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import ParentVariableSelection from "@/components/ParentVariableSelection";
+import TestcaseMeta from "@/components/TestcaseMeta";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchForecastData, fetchForecastVariables, fetchMeasurementVariables, TimeSeriesData, VariableInfo } from "@/lib/fetchBoptest";
-import BoptestMeta from "@/components/BoptestMeta";
 import SignalSelector from "@/components/SignalSelector";
 import type { SignalConfig } from "@/components/SignalPlotConfigurator"
 import SignalPlotConfigurator from "@/components/SignalPlotConfigurator";
@@ -78,8 +77,11 @@ export default function Page() {
           height="100vh" // Set the height to fill the viewport
           overflowY="auto" // Enable vertical scrolling
         >
-          <BoptestMeta serverUrl="http://127.0.01:5000" />
-          <ParentVariableSelection />
+          <TestcaseMeta
+            measurementVariables={measurementVariables}
+            forecastVariables={forecastVariables}
+            serverUrl="http://127.0.0.1:5000"
+          />
         </VStack>
         {forecastData.length > 0 ? (
           <TimeSeriesPlot
