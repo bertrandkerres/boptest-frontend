@@ -1,28 +1,31 @@
 "use client";
-import { Box, Checkbox, VStack, Heading } from "@chakra-ui/react";
+import { Box, VStack, Heading, Text, Button } from "@chakra-ui/react";
+import { Collapsible } from "@chakra-ui/react";
+import { VariableInfo } from "@/lib/fetchBoptest";
 
 interface VariableSelectionProps {
   title: string;
-  variables: string[];
+  variables: VariableInfo[];
 }
 
 const VariableSelection = ({ title, variables }: VariableSelectionProps) => {
   return (
     <Box p={4}>
-      <Heading size="md" mb={4}>
+      <Heading size="sm" mb={4}>
         {title}
       </Heading>
       <VStack align="start" gap={2}>
         {variables.map((variable) => (
-            <Checkbox.Root key={variable}>
-              <Checkbox.HiddenInput />
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
-              <Checkbox.Label>
-                {variable}
-              </Checkbox.Label>
-              </Checkbox.Root>
+          <Collapsible.Root key={variable.name}>
+            <Collapsible.Trigger fontSize="sm">
+                {variable.name} {variable.unit && `[${variable.unit}]`}
+            </Collapsible.Trigger>
+            <Collapsible.Content>
+              <Text mt={2} fontSize="sm" color="gray.600">
+                {variable.description}
+              </Text>
+            </Collapsible.Content>
+          </Collapsible.Root>
         ))}
       </VStack>
     </Box>

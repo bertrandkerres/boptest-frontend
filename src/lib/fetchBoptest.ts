@@ -6,6 +6,12 @@ export type TimeSeriesData = {
   name: string;
 };
 
+export type VariableInfo = {
+  name: string;
+  description: string;
+  unit: string;
+};
+
 export const fetchForecastData = async (
   pointNames: string[],
   horizon: number = 86400,
@@ -102,33 +108,47 @@ export const fetchMeasurementData = async (
   return [];
 };
 
-export const fetchMeasurementVariables = async () => {
+export const fetchMeasurementVariables = async (): Promise<VariableInfo[]> => {
   try {
-    // Fetch measurement variables
     const measurements = await getMeasurements();
     const inputs = await getInputs();
 
-    const measurementNames = Object.keys(measurements.data?.payload || {});
-    const inputNames = Object.keys(inputs.data?.payload || {}).filter(
-      (name) => !name.endsWith("_activate")
+    const measurementVariables = Object.entries(measurements.data?.payload || {}).map(
+      ([name, { Description, Unit }]) => ({
+        name,
+        description: Description || "No description available",
+        unit: Unit || "",
+      })
     );
 
-    return [...measurementNames, ...inputNames];
+    const inputVariables = Object.entries(inputs.data?.payload || {})
+      .filter(([name]) => !name.endsWith("_activate"))
+      .map(([name, { Description, Unit }]) => ({
+        name,
+        description: Description || "No description available",
+        unit: Unit || "",
+      }));
 
+    return [...measurementVariables, ...inputVariables];
   } catch (error) {
-    console.error("Error fetching variables:", error);
+    console.error("Error fetching measurement variables:", error);
     return [];
   }
 };
 
-export const fetchForecastVariables = async () => {
+export const fetchForecastVariables = async (): Promise<VariableInfo[]> => {
   try {
-    // Fetch forecast variables
     const forecastPoints = await getForecastPoints();
-    const forecastPointNames = Object.keys(forecastPoints.data?.payload || {});
-    return forecastPointNames;
+
+    return Object.entries(forecastPoints.data?.payload || {}).map(
+      ([name, { Description, Unit }]) => ({
+        name,
+        description: Description || "No description available",
+        unit: Unit || "",
+      })
+    );
   } catch (error) {
-    console.error("Error fetching variables:", error);
+    console.error("Error fetching forecast variables:", error);
     return [];
   }
 };
