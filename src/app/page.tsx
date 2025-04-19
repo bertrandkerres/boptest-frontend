@@ -9,25 +9,11 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import TestcaseMeta from "@/components/TestcaseMeta";
-import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
-import { fetchForecastData, fetchForecastVariables, fetchMeasurementData, fetchMeasurementVariables, TimeSeriesData, VariableInfo } from "@/lib/fetchBoptest";
-import SignalSelector from "@/components/SignalSelector";
-import type { SignalConfig } from "@/components/SignalPlotConfigurator"
-import SignalPlotConfigurator from "@/components/SignalPlotConfigurator";
+import { fetchForecastData, fetchForecastVariables, fetchMeasurementData, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
 import TimeSeriesPlotWithSelector from "@/components/TimeSeriesPlotWithSelector";
 
 export default function Page() {
-  const [forecastData, setForecastData] = useState<TimeSeriesData[]>([]);
-
-  useEffect(() => {
-    const loadForecastData = async () => {
-      const data = await fetchForecastData(["LowerSetp[1]", "UpperSetp[1]"]);
-      setForecastData(data);
-    };
-
-    loadForecastData();
-  }, []);
 
   const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
   const [forecastVariables, setForecastVariables] = useState<VariableInfo[]>([]);

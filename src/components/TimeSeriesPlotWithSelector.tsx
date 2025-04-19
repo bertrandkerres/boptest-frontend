@@ -38,14 +38,18 @@ const TimeSeriesPlotWithSelector = ({
 
   const updateSelectedSignals = (signalNames: string[]) => {
     setSelectedSignals((prevSelectedSignals) => {
+      const defaultStyle = {
+        lineStyle: "solid" as const, // Default line style
+        lineWidth: 2, // Default line width
+        color: "#000000", // Default color
+      }
+      
       // Add new SignalConfigurations for signal names not already in the state
       const newSignals = signalNames
         .filter((signalName) => !prevSelectedSignals.some((signal) => signal.name === signalName))
         .map((signalName) => ({
           name: signalName,
-          lineStyle: "solid" as "solid", // Default line style
-          lineWidth: 2, // Default line width
-          color: "#000000", // Default color
+          ...defaultStyle
         }));
   
       // Filter out SignalConfigurations for signals not in the input array

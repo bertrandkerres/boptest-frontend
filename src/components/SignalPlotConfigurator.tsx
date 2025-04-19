@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, VStack, Input, Button, Select, Heading, createListCollection, HStack, Portal } from "@chakra-ui/react";
+import { VStack, Input, Select, Heading, createListCollection, HStack, Portal } from "@chakra-ui/react";
 
 export type SignalConfig = {
   name: string;

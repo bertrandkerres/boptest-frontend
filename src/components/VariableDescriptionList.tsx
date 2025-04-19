@@ -1,5 +1,5 @@
 "use client";
-import { Box, VStack, Heading, Text, Button } from "@chakra-ui/react";
+import { Box, VStack, Heading, Text } from "@chakra-ui/react";
 import { Collapsible } from "@chakra-ui/react";
 import { VariableInfo } from "@/lib/fetchBoptest";
 
