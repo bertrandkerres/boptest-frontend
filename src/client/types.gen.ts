@@ -213,6 +213,34 @@ export type PostAdvanceResponses = {
 
 export type PostAdvanceResponse = PostAdvanceResponses[keyof PostAdvanceResponses];
 
+export type GetNameData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/name';
+};
+
+export type GetNameResponses = {
+    /**
+     * Successful response with the test case name.
+     */
+    200: {
+        message?: string;
+        /**
+         * The payload containing the test case name.
+         */
+        payload?: {
+            /**
+             * The name of the test case.
+             */
+            name?: string;
+        };
+        status?: number;
+    };
+};
+
+export type GetNameResponse = GetNameResponses[keyof GetNameResponses];
+
 export type GetStepData = {
     body?: never;
     path?: never;

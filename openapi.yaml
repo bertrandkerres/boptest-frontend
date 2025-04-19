@@ -239,6 +239,31 @@ paths:
                   status:
                     type: integer
                     example: 200
+  /name:
+    get:
+      summary: Get the test case name
+      description: Returns the loaded test case name.
+      responses:
+        '200':
+          description: Successful response with the test case name.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Queried the name of the test case successfully."
+                  payload:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: The name of the test case.
+                    description: The payload containing the test case name.
+                  status:
+                    type: integer
+                    example: 200
   /step:
     get:
       summary: Get the simulation time step
