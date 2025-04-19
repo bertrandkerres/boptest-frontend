@@ -8,7 +8,7 @@ interface VariableSelectionProps {
 
 const VariableSelection = ({ title, variables }: VariableSelectionProps) => {
   return (
-    <Box p={4} borderRight="1px solid #e2e8f0">
+    <Box p={4}>
       <Heading size="md" mb={4}>
         {title}
       </Heading>

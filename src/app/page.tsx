@@ -5,12 +5,14 @@ import {
   ClientOnly,
   HStack,
   Skeleton,
+  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import ParentVariableSelection from "@/components/ParentVariableSelection";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchForecastData, TimeSeriesData } from "@/lib/fetchBoptest";
+import TestCaseMetadata from "@/components/TestCaseMeta";
 
 
 export default function Page() {
@@ -28,7 +30,10 @@ export default function Page() {
   return (
     <>
       <HStack align="start" gap={0}>
-        <ParentVariableSelection />
+        <VStack width="25%" borderRight="1px solid #e2e8f0" align="left">
+          <TestCaseMetadata serverUrl="http://127.0.01:5000" />
+          <ParentVariableSelection />
+        </VStack>
         <Box flex="1" p={4}>
           {forecastData.length > 0 ? (
             <TimeSeriesPlot

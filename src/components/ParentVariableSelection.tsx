@@ -21,7 +21,7 @@ const ParentVariableSelection = () => {
   }, []);
 
   return (
-    <VStack align="start" gap={4}>
+    <VStack align="start" gap={0}>
       <VariableSelection title="Measurement Variables" variables={measurementVariables} />
       <VariableSelection title="Forecast Variables" variables={forecastVariables} />
     </VStack>
