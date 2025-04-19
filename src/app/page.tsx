@@ -30,7 +30,13 @@ export default function Page() {
   return (
     <>
       <HStack align="start" gap={0}>
-        <VStack width="25%" borderRight="1px solid #e2e8f0" align="left">
+        <VStack
+          width="25%"
+          borderRight="1px solid #e2e8f0"
+          align="left"
+          height="100vh" // Set the height to fill the viewport
+          overflowY="auto" // Enable vertical scrolling
+        >
           <TestCaseMetadata serverUrl="http://127.0.01:5000" />
           <ParentVariableSelection />
         </VStack>
