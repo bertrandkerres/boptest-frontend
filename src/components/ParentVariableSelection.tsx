@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { VStack } from "@chakra-ui/react";
-import VariableSelection from "./VariableSelection";
+import VariableDescriptionList from "./VariableDescriptionList";
 import { fetchForecastVariables, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
 
 const ParentVariableSelection = () => {
@@ -22,8 +22,8 @@ const ParentVariableSelection = () => {
 
   return (
     <VStack align="start" gap={4}>
-      <VariableSelection title="Measurement Variables" variables={measurementVariables} />
-      <VariableSelection title="Forecast Variables" variables={forecastVariables} />
+      <VariableDescriptionList title="Measurement Variables" variables={measurementVariables} />
+      <VariableDescriptionList title="Forecast Variables" variables={forecastVariables} />
     </VStack>
   );
 };

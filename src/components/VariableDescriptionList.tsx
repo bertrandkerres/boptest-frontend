@@ -3,12 +3,12 @@ import { Box, VStack, Heading, Text, Button } from "@chakra-ui/react";
 import { Collapsible } from "@chakra-ui/react";
 import { VariableInfo } from "@/lib/fetchBoptest";
 
-interface VariableSelectionProps {
+interface VariableDescriptionListProps {
   title: string;
   variables: VariableInfo[];
 }
 
-const VariableSelection = ({ title, variables }: VariableSelectionProps) => {
+const VariableDescriptionList = ({ title, variables }: VariableDescriptionListProps) => {
   return (
     <Box p={4}>
       <Heading size="sm" mb={4}>
@@ -32,4 +32,4 @@ const VariableSelection = ({ title, variables }: VariableSelectionProps) => {
   );
 };
 
-export default VariableSelection;
+export default VariableDescriptionList;

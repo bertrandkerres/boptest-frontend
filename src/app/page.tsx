@@ -12,7 +12,7 @@ import ParentVariableSelection from "@/components/ParentVariableSelection";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchForecastData, fetchForecastVariables, fetchMeasurementVariables, TimeSeriesData, VariableInfo } from "@/lib/fetchBoptest";
-import TestCaseMetadata from "@/components/TestCaseMeta";
+import BoptestMeta from "@/components/BoptestMeta";
 import SignalSelector from "@/components/SignalSelector";
 import type { SignalConfig } from "@/components/SignalPlotConfigurator"
 import SignalPlotConfigurator from "@/components/SignalPlotConfigurator";
@@ -78,7 +78,7 @@ export default function Page() {
           height="100vh" // Set the height to fill the viewport
           overflowY="auto" // Enable vertical scrolling
         >
-          <TestCaseMetadata serverUrl="http://127.0.01:5000" />
+          <BoptestMeta serverUrl="http://127.0.01:5000" />
           <ParentVariableSelection />
         </VStack>
         {forecastData.length > 0 ? (

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Box, Spinner, Table } from "@chakra-ui/react";
 import { getName, getStep, getScenario } from "@/client/sdk.gen";
 
-const TestCaseMetadata = ({ serverUrl }: { serverUrl: string }) => {
+const BoptestMeta = ({ serverUrl }: { serverUrl: string }) => {
   const [testCaseName, setTestCaseName] = useState<string | null>(null);
   const [timeStep, setTimeStep] = useState<number | null>(null);
   const [scenario, setScenario] = useState<Record<string, string> | null>(null);
@@ -84,4 +84,4 @@ const TestCaseMetadata = ({ serverUrl }: { serverUrl: string }) => {
   );
 };
 
-export default TestCaseMetadata;
+export default BoptestMeta;
