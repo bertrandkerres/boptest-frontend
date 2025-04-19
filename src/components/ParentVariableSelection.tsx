@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { VStack } from "@chakra-ui/react";
 import VariableSelection from "./VariableSelection";
-import { getMeasurements, getInputs, getForecastPoints } from "../client/sdk.gen";
+import { fetchForecastVariables, fetchMeasurementVariables } from "@/lib/fetchBoptest";
 
 const ParentVariableSelection = () => {
   const [measurementVariables, setMeasurementVariables] = useState<string[]>([]);
@@ -10,25 +10,11 @@ const ParentVariableSelection = () => {
 
   useEffect(() => {
     const fetchVariables = async () => {
-      try {
-        // Fetch measurement variables
-        const measurements = await getMeasurements();
-        const inputs = await getInputs();
+      const measurement_vars = await fetchMeasurementVariables();
+      setMeasurementVariables(measurement_vars);
 
-        const measurementNames = Object.keys(measurements.data?.payload || {});
-        const inputNames = Object.keys(inputs.data?.payload || {}).filter(
-          (name) => !name.endsWith("_activate")
-        );
-
-        setMeasurementVariables([...measurementNames, ...inputNames]);
-
-        // Fetch forecast variables
-        const forecastPoints = await getForecastPoints();
-        const forecastPointNames = Object.keys(forecastPoints.data?.payload || {});
-        setForecastVariables(forecastPointNames);
-      } catch (error) {
-        console.error("Error fetching variables:", error);
-      }
+      const forecast_names = await fetchForecastVariables();
+      setForecastVariables(forecast_names);
     };
 
     fetchVariables();

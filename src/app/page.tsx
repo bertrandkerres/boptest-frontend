@@ -10,11 +10,11 @@ import { useEffect, useState } from "react";
 import ParentVariableSelection from "@/components/ParentVariableSelection";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
-import { fetchForecastData, ForecastData } from "@/lib/fetchForecastData";
+import { fetchForecastData, TimeSeriesData } from "@/lib/fetchBoptest";
 
 
 export default function Page() {
-  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
+  const [forecastData, setForecastData] = useState<TimeSeriesData[]>([]);
 
   useEffect(() => {
     const loadForecastData = async () => {
