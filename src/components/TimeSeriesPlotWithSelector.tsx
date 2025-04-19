@@ -5,6 +5,8 @@ import {
   VStack,
   Box,
   HStack,
+  NumberInput,
+  Text
 } from "@chakra-ui/react";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { VariableInfo } from "@/lib/fetchBoptest";
@@ -31,6 +33,8 @@ const TimeSeriesPlotWithSelector = ({
 }: TimeSeriesPlotWithSelectorProps) => {
 
   const [selectedSignals, setSelectedSignals] = useState<SignalConfig[]>([]);
+  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
+  const [updateInterval, setUpdateInterval] = useState<string>("2000"); // Default to 2000ms
 
   const updateSelectedSignals = (signalNames: string[]) => {
     setSelectedSignals((prevSelectedSignals) => {
@@ -67,7 +71,9 @@ const TimeSeriesPlotWithSelector = ({
     });
   };
 
-  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
+  const handleUpdateIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdateInterval(event.target.value);
+  };
 
   useEffect(() => {
     const fetchNewSignalData = async () => {
@@ -95,10 +101,33 @@ const TimeSeriesPlotWithSelector = ({
     fetchNewSignalData();
   }, [selectedSignals]);
 
+  useEffect(() => {
+    const updateAllSignalData = async () => {
+      // Get the names of all signals currently in plotData
+      const allSignalNames = plotData.map((data) => data.name);
+
+      // Fetch updated data for all signals
+      if (allSignalNames.length > 0) {
+        const updatedSignalData = await fetchSignalData(allSignalNames);
+
+        // Update plotData with the new signal data
+        setPlotData(updatedSignalData);
+      }
+    };
+
+    // Set an interval to update the data based on the updateInterval state
+    let updateIntervalMs = parseInt(updateInterval, 10);
+    if (isNaN(updateIntervalMs) || updateIntervalMs < 1000)
+      updateIntervalMs = 1000;
+    const intervalId = setInterval(updateAllSignalData, updateIntervalMs);
+
+    // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [plotData, fetchSignalData, updateInterval]);
 
   return (
     <HStack width="100%">
-      <Box flex="1" minWidth="800px">
+      <Box flex="1" maxWidth="800px">
         <TimeSeriesPlot
           title="Time Series Plot"
           data={plotData.map((data) => {
@@ -113,7 +142,16 @@ const TimeSeriesPlotWithSelector = ({
           yAxisLabel="Value"
         />
       </Box>
-      <VStack flex="1" maxWidth="300px">
+      <VStack flex="1" maxWidth="300px" align="start">
+          <NumberInput.Root
+            value={updateInterval}
+            onChange={handleUpdateIntervalChange}
+            size="xs"
+          >
+            <NumberInput.Label><Text textStyle="xs">Update frequency (ms)</Text></NumberInput.Label>
+            <NumberInput.Control />
+            <NumberInput.Input />
+          </NumberInput.Root>
         <SignalSelector
           measurementVariables={measurementVariables}
           forecastVariables={forecastVariables}
