@@ -27,6 +27,7 @@ const SignalSelector = ({
       multiple
       collection={allVariables}
       onValueChange={(e) => onSelectSignal(e.value)}
+      size="xs"
     >
       <Select.HiddenSelect />
       <Select.Control>

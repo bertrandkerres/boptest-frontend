@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import {
   VStack,
   Box,
+  HStack,
 } from "@chakra-ui/react";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { VariableInfo } from "@/lib/fetchBoptest";
@@ -83,6 +84,7 @@ const TimeSeriesPlotWithSelector = ({
 
       // Fetch data for the new signals
       if (newSignalNames.length > 0) {
+        console.log(newSignalNames)
         const newSignalData = await fetchSignalData(newSignalNames);
 
         // Update plotData with the new signal data
@@ -91,12 +93,12 @@ const TimeSeriesPlotWithSelector = ({
     };
 
     fetchNewSignalData();
-  }, [selectedSignals, fetchSignalData, plotData]);
+  }, [selectedSignals]);
 
 
   return (
-    <>
-      <Box flex="1" p={4}>
+    <HStack width="100%">
+      <Box flex="1" minWidth="800px">
         <TimeSeriesPlot
           title="Time Series Plot"
           data={plotData.map((data) => {
@@ -111,7 +113,7 @@ const TimeSeriesPlotWithSelector = ({
           yAxisLabel="Value"
         />
       </Box>
-      <VStack flex="1" p={4}>
+      <VStack flex="1" maxWidth="300px">
         <SignalSelector
           measurementVariables={measurementVariables}
           forecastVariables={forecastVariables}
@@ -119,7 +121,7 @@ const TimeSeriesPlotWithSelector = ({
         />
         <SignalPlotConfigurator selectedSignals={selectedSignals} onUpdateSignal={onUpdateSignal}/>
       </VStack>
-    </>
+    </HStack>
   );
 };
 

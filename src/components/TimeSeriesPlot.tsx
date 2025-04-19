@@ -47,6 +47,11 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
         yaxis: { title: { text: yAxisLabel } },
         margin: { l: 50, r: 30, t: 50, b: 50 },
         showlegend: true,
+        legend: {
+          x: 1,
+          xanchor: "right",
+          y: 1
+        }
       }}
       style={{ width: "100%", height: "100%" }}
       config={{ responsive: true }}

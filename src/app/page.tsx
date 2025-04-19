@@ -56,7 +56,7 @@ export default function Page() {
     const forecastSignals = signals.filter(signal =>
       forecastVariables.some(variable => variable.name === signal)
     );
-    const forecastData = await fetchForecastData(forecastSignals);
+    const forecastData = forecastSignals.length > 0 ? await fetchForecastData(forecastSignals): [];
     
     // Check plant time
     let t0 = 0;
@@ -64,11 +64,11 @@ export default function Page() {
       t0 = forecastData[0].x[0]
     } else {
       const dummySignals = [forecastVariables[0].name];
-      const dummyForecast = await fetchForecastData(dummySignals, 0, 3600);
+      const dummyForecast = await fetchForecastData(dummySignals, 7200, 3600);
       t0 = dummyForecast[0].x[0];
     }
 
-    const measurementData = await fetchMeasurementData(measurementSignals, 0, t0);
+    const measurementData = measurementSignals.length > 0 ? await fetchMeasurementData(measurementSignals, 0, t0) : [];
 
     // Return an array of TimeSeriesData
     const allData = [...measurementData, ...forecastData];

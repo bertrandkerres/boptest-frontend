@@ -17,13 +17,16 @@ export const fetchForecastData = async (
   horizon: number = 86400,
   interval: number = 3600
 ): Promise<TimeSeriesData[]> => {
+  const body = {
+    point_names: pointNames,
+    horizon,
+    interval,
+  };
+  console.log("Querying /forecast: ", body);
+
   try {
     const response = await putForecast({
-      body: {
-        point_names: pointNames,
-        horizon,
-        interval,
-      },
+      body: body,
     });
 
     if (response.data?.payload) {
@@ -48,13 +51,16 @@ export const fetchMeasurementData = async (
   finalTime: number,
   stepsize: number = 0
 ): Promise<TimeSeriesData[]> => {
+  const body = {
+    point_names: pointNames,
+    start_time: startTime,
+    final_time: finalTime,
+  };
+  console.log("Querying /results: ", body);
+
   try {
     const response = await putResults({
-      body: {
-        point_names: pointNames,
-        start_time: startTime,
-        final_time: finalTime,
-      },
+      body: body,
     });
 
     if (response.data?.payload) {
