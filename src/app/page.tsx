@@ -11,10 +11,11 @@ import { useEffect, useState } from "react";
 import TestcaseMeta from "@/components/TestcaseMeta";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
-import { fetchForecastData, fetchForecastVariables, fetchMeasurementVariables, TimeSeriesData, VariableInfo } from "@/lib/fetchBoptest";
+import { fetchForecastData, fetchForecastVariables, fetchMeasurementData, fetchMeasurementVariables, TimeSeriesData, VariableInfo } from "@/lib/fetchBoptest";
 import SignalSelector from "@/components/SignalSelector";
 import type { SignalConfig } from "@/components/SignalPlotConfigurator"
 import SignalPlotConfigurator from "@/components/SignalPlotConfigurator";
+import TimeSeriesPlotWithSelector from "@/components/TimeSeriesPlotWithSelector";
 
 export default function Page() {
   const [forecastData, setForecastData] = useState<TimeSeriesData[]>([]);
@@ -43,29 +44,37 @@ export default function Page() {
     fetchVariables();
   }, []);
 
-  const [selectedSignals, setSelectedSignals] = useState<SignalConfig[]>([]);
+  const fetchSignalData = async (signals: string[]) => {
+    /* For each signal:
+    1. Check whether it's in measurementVariables or forecastVariables
+    2. If it's in measurementVariables, fetch the measurement data
+    3. If it's in forecastVariables, fetch the forecast data
+    */
+    const measurementSignals = signals.filter(signal =>
+      measurementVariables.some(variable => variable.name === signal)
+    );
+    const forecastSignals = signals.filter(signal =>
+      forecastVariables.some(variable => variable.name === signal)
+    );
+    const forecastData = await fetchForecastData(forecastSignals);
+    
+    // Check plant time
+    let t0 = 0;
+    if (forecastData.length > 0) {
+      t0 = forecastData[0].x[0]
+    } else {
+      const dummySignals = [forecastVariables[0].name];
+      const dummyForecast = await fetchForecastData(dummySignals, 0, 3600);
+      t0 = dummyForecast[0].x[0];
+    }
 
-  const updateSelectedSignals = (signalNames: string[]) => {
-    setSelectedSignals((prevSelectedSignals) => {
-      // Add new SignalConfigurations for signal names not already in the state
-      const newSignals = signalNames
-        .filter((signalName) => !prevSelectedSignals.some((signal) => signal.name === signalName))
-        .map((signalName) => ({
-          name: signalName,
-          lineStyle: "solid" as "solid", // Default line style
-          lineWidth: 2, // Default line width
-          color: "#000000", // Default color
-        }));
-  
-      // Filter out SignalConfigurations for signals not in the input array
-      const filteredSignals = prevSelectedSignals.filter((signal) =>
-        signalNames.includes(signal.name)
-      );
-  
-      // Combine the filtered existing signals with the new ones
-      return [...filteredSignals, ...newSignals];
-    });
-  };
+    const measurementData = await fetchMeasurementData(measurementSignals, 0, t0);
+
+    // Return an array of TimeSeriesData
+    const allData = [...measurementData, ...forecastData];
+    return allData;
+  }
+
 
   return (
     <>
@@ -83,23 +92,11 @@ export default function Page() {
             serverUrl="http://127.0.0.1:5000"
           />
         </VStack>
-        {forecastData.length > 0 ? (
-          <TimeSeriesPlot
-            title="Forecast Time Series"
-            data={forecastData}
-            yAxisLabel="Value"
-          />
-        ) : (
-          <Skeleton height="400px" />
-        )}
-        <Box flex="1" p={4}>
-          <SignalSelector
-            measurementVariables={measurementVariables}
-            forecastVariables={forecastVariables}
-            onSelectSignal={updateSelectedSignals}
-          />
-          <SignalPlotConfigurator selectedSignals={selectedSignals} onUpdateSignal={(e1:any, e2: any) => {}}/>
-        </Box>
+      <TimeSeriesPlotWithSelector
+        measurementVariables={measurementVariables}
+        forecastVariables={forecastVariables}
+        fetchSignalData={fetchSignalData}
+      />
       </HStack>
       <Box pos="absolute" top="4" right="4">
         <ClientOnly fallback={<Skeleton w="10" h="10" rounded="md" />}>
