@@ -11,6 +11,9 @@ interface TimeSeriesPlotProps {
     name: string; // Name of the time series
     x: number[]; // Time values
     y: number[]; // Data values
+    lineStyle?: "solid" | "dot" | "dash"; // Line style
+    lineWidth?: number; // Line width
+    color?: string; // Line color
   }>;
   yAxisLabel: string; // Label for the y-axis
 }
@@ -32,11 +35,16 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
         type: "scatter",
         mode: "lines",
         name: series.name,
+        line: {
+          dash: series.lineStyle || "solid", // Default to solid line
+          width: series.lineWidth || 2, // Default line width
+          color: series.color || undefined, // Default to Plotly's automatic color
+        },
       }))}
       layout={{
         title: title,
-        xaxis: { title: {text: "Time"} },
-        yaxis: { title: {text: yAxisLabel} },
+        xaxis: { title: { text: "Time" } },
+        yaxis: { title: { text: yAxisLabel } },
         margin: { l: 50, r: 30, t: 50, b: 50 },
         showlegend: true,
       }}
