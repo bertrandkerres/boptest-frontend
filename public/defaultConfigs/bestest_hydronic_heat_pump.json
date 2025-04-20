@@ -1,0 +1,6 @@
+[
+  { "name": "LowerSetp[1]", "lineStyle": "dot", "lineWidth": 1, "color": "black" },
+  { "name": "UpperSetp[1]", "lineStyle": "dot", "lineWidth": 1, "color": "black" },
+  { "name": "reaTZon_y", "lineStyle": "solid", "lineWidth": 1, "color": "black" },
+  { "name": "reaTSup_y", "lineStyle": "solid", "lineWidth": 1, "color": "red" }
+]
