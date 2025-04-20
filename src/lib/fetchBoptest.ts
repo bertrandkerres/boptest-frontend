@@ -1,4 +1,5 @@
 import { getForecastPoints, getInputs, getMeasurements, getStep, putForecast, putResults } from "@/client/sdk.gen";
+import { PlotConfig } from "@/components/TimeSeriesPlotWithStates";
 
 export type TimeSeriesData = {
   x: number[];
@@ -49,7 +50,7 @@ export const fetchMeasurementData = async (
   pointNames: string[],
   startTime: number,
   finalTime: number,
-  stepsize: number = 0
+  interval: number = 0
 ): Promise<TimeSeriesData[]> => {
   const body = {
     point_names: pointNames,
@@ -70,12 +71,12 @@ export const fetchMeasurementData = async (
         const dt = time[1] - time[0]; // Calculate the step size from the time array
 
         // Handle default value for stepsize
-        if (stepsize === 0) {
+        if (interval === 0) {
           const r = await getStep();
-          if (r.data?.payload) stepsize = r.data.payload;
+          if (r.data?.payload) interval = r.data.payload;
         }
 
-        if (stepsize <= dt) {
+        if (interval <= dt) {
           // If no resampling is needed, return the original time series
           return Object.entries(signals).map(([name, values]) => ({
             name,
@@ -85,7 +86,7 @@ export const fetchMeasurementData = async (
         }
 
         // Resample the time series if stepsize > dt
-        const n = Math.round(stepsize / dt); // Calculate the resampling factor
+        const n = Math.round(interval / dt); // Calculate the resampling factor
 
         // Resample the time array
         const resampledTime = time.filter((_, index) => index % n === 0);
@@ -113,6 +114,64 @@ export const fetchMeasurementData = async (
 
   return [];
 };
+
+export const fetchSignalData = async (
+  plotConfig: PlotConfig,
+  dummyVarName: string
+): Promise<Array<{ name: string; x: number[]; y: number[] }>> => {
+  try {
+
+    // Fetch data for all forecast signals
+    const forecastPromises = plotConfig.forecast.signals.map((signal) =>
+      fetchForecastData(
+        [signal.name], // Pass the signal name as an array
+        plotConfig.forecast.horizon, // Horizon
+        plotConfig.forecast.interval // Interval
+      ).then((data) => ({
+        name: signal.name,
+        x: data[0]?.x || [],
+        y: data[0]?.y || [],
+      }))
+    );
+    const forecastData = await Promise.all(forecastPromises);
+
+    // Check plant time
+    let t_plant = 0;
+    if (forecastData.length > 0) {
+      t_plant = forecastData[0].x[0]
+    } else {
+      const dummySignals = [dummyVarName];
+      const dummyForecast = await fetchForecastData(dummySignals, 7200, 3600);
+      t_plant = dummyForecast[0].x[0];
+    }
+
+    // Fetch data for all measurement signals
+    const t_start = Math.max(t_plant + plotConfig.measurement.horizon, 0);
+    const measurementPromises = plotConfig.measurement.signals.map((signal) =>
+      fetchMeasurementData(
+        [signal.name], // Pass the signal name as an array
+        t_start, // Start time
+        t_plant,
+        plotConfig.measurement.interval // Interval
+      ).then((data) => ({
+        name: signal.name,
+        x: data[0]?.x || [],
+        y: data[0]?.y || [],
+      }))
+    );
+
+
+    // Wait for all promises to resolve
+    const measurementData = await Promise.all(measurementPromises);
+
+    // Combine the results
+    return [...measurementData, ...forecastData];
+  } catch (error) {
+    console.error("Error fetching signal data:", error);
+    return [];
+  }
+};
+
 
 export const fetchMeasurementVariables = async (): Promise<VariableInfo[]> => {
   try {

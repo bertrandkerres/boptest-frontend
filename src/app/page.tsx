@@ -10,8 +10,8 @@ import {
 import { useEffect, useState } from "react";
 import TestcaseMeta from "@/components/TestcaseMeta";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
-import { fetchForecastData, fetchForecastVariables, fetchMeasurementData, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
-import TimeSeriesPlotWithStates from "@/components/TimeSeriesPlotWithStates";
+import { fetchSignalData, fetchForecastVariables, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
+import TimeSeriesPlotWithStates, { PlotConfig } from "@/components/TimeSeriesPlotWithStates";
 
 export default function Page() {
 
@@ -30,37 +30,8 @@ export default function Page() {
     fetchVariables();
   }, []);
 
-  const fetchSignalData = async (signals: string[]) => {
-    /* For each signal:
-    1. Check whether it's in measurementVariables or forecastVariables
-    2. If it's in measurementVariables, fetch the measurement data
-    3. If it's in forecastVariables, fetch the forecast data
-    */
-    const measurementSignals = signals.filter(signal =>
-      measurementVariables.some(variable => variable.name === signal)
-    );
-    const forecastSignals = signals.filter(signal =>
-      forecastVariables.some(variable => variable.name === signal)
-    );
-    const forecastData = forecastSignals.length > 0 ? await fetchForecastData(forecastSignals): [];
-    
-    // Check plant time
-    let t0 = 0;
-    if (forecastData.length > 0) {
-      t0 = forecastData[0].x[0]
-    } else {
-      const dummySignals = [forecastVariables[0].name];
-      const dummyForecast = await fetchForecastData(dummySignals, 7200, 3600);
-      t0 = dummyForecast[0].x[0];
-    }
-
-    const measurementData = measurementSignals.length > 0 ? await fetchMeasurementData(measurementSignals, 0, t0) : [];
-
-    // Return an array of TimeSeriesData
-    const allData = [...measurementData, ...forecastData];
-    return allData;
-  }
-
+  const dummyForecastVar = forecastVariables.length > 0 ? forecastVariables[0].name : "UpperSetp[1]"
+  const fetchData = async (pc: PlotConfig) => fetchSignalData(pc, dummyForecastVar)
 
   return (
     <>
@@ -79,7 +50,7 @@ export default function Page() {
           />
         </VStack>
       <TimeSeriesPlotWithStates
-        fetchSignalData={fetchSignalData}
+        fetchSignalData={fetchData}
       />
       </HStack>
       <Box pos="absolute" top="4" right="4">
