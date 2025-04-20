@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import TestcaseMeta from "@/components/TestcaseMeta";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchForecastData, fetchForecastVariables, fetchMeasurementData, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
-import TimeSeriesPlotWithSelector from "@/components/TimeSeriesPlotWithSelector";
+import TimeSeriesPlotWithStates from "@/components/TimeSeriesPlotWithStates";
 
 export default function Page() {
 
@@ -78,9 +78,7 @@ export default function Page() {
             serverUrl="http://127.0.0.1:5000"
           />
         </VStack>
-      <TimeSeriesPlotWithSelector
-        measurementVariables={measurementVariables}
-        forecastVariables={forecastVariables}
+      <TimeSeriesPlotWithStates
         fetchSignalData={fetchSignalData}
       />
       </HStack>
