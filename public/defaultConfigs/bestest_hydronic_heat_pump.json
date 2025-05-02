@@ -1,0 +1,20 @@
+[
+  {
+    "measurement": {
+      "horizon": -87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "reaTZon_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
+        { "name": "reaTSup_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+      ]
+    },
+    "forecast": {
+      "horizon": 87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "LowerSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
+        { "name": "UpperSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }}
+      ]
+    }
+  }
+]
