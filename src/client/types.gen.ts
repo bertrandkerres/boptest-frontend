@@ -89,14 +89,24 @@ export type StandardResponse = {
     status?: number;
 };
 
-export type GetInputsData = {
+/**
+ * The UUID of the test case.
+ */
+export type TestId = string;
+
+export type GetInputsByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/inputs';
+    url: '/inputs/{testid}';
 };
 
-export type GetInputsResponses = {
+export type GetInputsByTestidResponses = {
     /**
      * Successful response with metadata for inputs.
      */
@@ -107,16 +117,21 @@ export type GetInputsResponses = {
     };
 };
 
-export type GetInputsResponse = GetInputsResponses[keyof GetInputsResponses];
+export type GetInputsByTestidResponse = GetInputsByTestidResponses[keyof GetInputsByTestidResponses];
 
-export type GetMeasurementsData = {
+export type GetMeasurementsByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/measurements';
+    url: '/measurements/{testid}';
 };
 
-export type GetMeasurementsResponses = {
+export type GetMeasurementsByTestidResponses = {
     /**
      * Successful response with metadata for measurements.
      */
@@ -127,16 +142,21 @@ export type GetMeasurementsResponses = {
     };
 };
 
-export type GetMeasurementsResponse = GetMeasurementsResponses[keyof GetMeasurementsResponses];
+export type GetMeasurementsByTestidResponse = GetMeasurementsByTestidResponses[keyof GetMeasurementsByTestidResponses];
 
-export type GetForecastPointsData = {
+export type GetForecastPointsByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/forecast_points';
+    url: '/forecast_points/{testid}';
 };
 
-export type GetForecastPointsResponses = {
+export type GetForecastPointsByTestidResponses = {
     /**
      * Successful response with metadata for forecast points.
      */
@@ -147,16 +167,21 @@ export type GetForecastPointsResponses = {
     };
 };
 
-export type GetForecastPointsResponse = GetForecastPointsResponses[keyof GetForecastPointsResponses];
+export type GetForecastPointsByTestidResponse = GetForecastPointsByTestidResponses[keyof GetForecastPointsByTestidResponses];
 
-export type PutForecastData = {
+export type PutForecastByTestidData = {
     body: ForecastQuery;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/forecast';
+    url: '/forecast/{testid}';
 };
 
-export type PutForecastResponses = {
+export type PutForecastByTestidResponses = {
     /**
      * Successful response with forecast time series.
      */
@@ -167,16 +192,21 @@ export type PutForecastResponses = {
     };
 };
 
-export type PutForecastResponse = PutForecastResponses[keyof PutForecastResponses];
+export type PutForecastByTestidResponse = PutForecastByTestidResponses[keyof PutForecastByTestidResponses];
 
-export type PutResultsData = {
+export type PutResultsByTestidData = {
     body: ResultsQuery;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/results';
+    url: '/results/{testid}';
 };
 
-export type PutResultsResponses = {
+export type PutResultsByTestidResponses = {
     /**
      * Successful response with results time series.
      */
@@ -187,18 +217,23 @@ export type PutResultsResponses = {
     };
 };
 
-export type PutResultsResponse = PutResultsResponses[keyof PutResultsResponses];
+export type PutResultsByTestidResponse = PutResultsByTestidResponses[keyof PutResultsByTestidResponses];
 
-export type PostAdvanceData = {
+export type PostAdvanceByTestidData = {
     body?: {
         [key: string]: number | 0 | 1;
     };
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/advance';
+    url: '/advance/{testid}';
 };
 
-export type PostAdvanceResponses = {
+export type PostAdvanceByTestidResponses = {
     /**
      * Successful response with simulation advancement results.
      */
@@ -211,16 +246,21 @@ export type PostAdvanceResponses = {
     };
 };
 
-export type PostAdvanceResponse = PostAdvanceResponses[keyof PostAdvanceResponses];
+export type PostAdvanceByTestidResponse = PostAdvanceByTestidResponses[keyof PostAdvanceByTestidResponses];
 
-export type GetNameData = {
+export type GetNameByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/name';
+    url: '/name/{testid}';
 };
 
-export type GetNameResponses = {
+export type GetNameByTestidResponses = {
     /**
      * Successful response with the test case name.
      */
@@ -239,16 +279,21 @@ export type GetNameResponses = {
     };
 };
 
-export type GetNameResponse = GetNameResponses[keyof GetNameResponses];
+export type GetNameByTestidResponse = GetNameByTestidResponses[keyof GetNameByTestidResponses];
 
-export type GetStepData = {
+export type GetStepByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/step';
+    url: '/step/{testid}';
 };
 
-export type GetStepResponses = {
+export type GetStepByTestidResponses = {
     /**
      * Successful response with the time step.
      */
@@ -262,21 +307,26 @@ export type GetStepResponses = {
     };
 };
 
-export type GetStepResponse = GetStepResponses[keyof GetStepResponses];
+export type GetStepByTestidResponse = GetStepByTestidResponses[keyof GetStepByTestidResponses];
 
-export type PutStepData = {
+export type PutStepByTestidData = {
     body: {
         /**
          * The new time step to set for the simulation.
          */
         step?: number;
     };
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/step';
+    url: '/step/{testid}';
 };
 
-export type PutStepResponses = {
+export type PutStepByTestidResponses = {
     /**
      * Successful response indicating the time step was updated.
      */
@@ -290,16 +340,21 @@ export type PutStepResponses = {
     };
 };
 
-export type PutStepResponse = PutStepResponses[keyof PutStepResponses];
+export type PutStepByTestidResponse = PutStepByTestidResponses[keyof PutStepByTestidResponses];
 
-export type GetScenarioData = {
+export type GetScenarioByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/scenario';
+    url: '/scenario/{testid}';
 };
 
-export type GetScenarioResponses = {
+export type GetScenarioByTestidResponses = {
     /**
      * Successful response with the scenario description.
      */
@@ -312,16 +367,21 @@ export type GetScenarioResponses = {
     };
 };
 
-export type GetScenarioResponse = GetScenarioResponses[keyof GetScenarioResponses];
+export type GetScenarioByTestidResponse = GetScenarioByTestidResponses[keyof GetScenarioByTestidResponses];
 
-export type GetKpiData = {
+export type GetKpiByTestidData = {
     body?: never;
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/kpi';
+    url: '/kpi/{testid}';
 };
 
-export type GetKpiResponses = {
+export type GetKpiByTestidResponses = {
     /**
      * Successful response with the KPIs.
      */
@@ -334,9 +394,9 @@ export type GetKpiResponses = {
     };
 };
 
-export type GetKpiResponse = GetKpiResponses[keyof GetKpiResponses];
+export type GetKpiByTestidResponse = GetKpiByTestidResponses[keyof GetKpiByTestidResponses];
 
-export type PutInitializeData = {
+export type PutInitializeByTestidData = {
     body: {
         /**
          * The start time of the simulation (epoch time).
@@ -347,12 +407,17 @@ export type PutInitializeData = {
          */
         warmup_period?: number;
     };
-    path?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
     query?: never;
-    url: '/initialize';
+    url: '/initialize/{testid}';
 };
 
-export type PutInitializeResponses = {
+export type PutInitializeByTestidResponses = {
     /**
      * Successful response indicating the simulation was initialized.
      */
@@ -366,8 +431,8 @@ export type PutInitializeResponses = {
     };
 };
 
-export type PutInitializeResponse = PutInitializeResponses[keyof PutInitializeResponses];
+export type PutInitializeByTestidResponse = PutInitializeByTestidResponses[keyof PutInitializeByTestidResponses];
 
 export type ClientOptions = {
-    baseUrl: 'http://127.0.0.1:5000' | (string & {});
+    baseUrl: 'http://localhost' | 'http://api.boptest.net' | (string & {});
 };

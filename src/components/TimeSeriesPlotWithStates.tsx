@@ -44,7 +44,7 @@ const TimeSeriesPlotWithStates = ({
   useEffect(() => {
     const fetchInitialSignals = async () => {
       try {
-        const response = await fetch("defaultConfigs/bestest_hydronic_heat_pump.json");
+        const response = await fetch("/defaultConfigs/bestest_hydronic_heat_pump.json");
         const jsonData: PlotConfig[] = await response.json();
         const data = jsonData[0];
         setSelectedSignals(data);

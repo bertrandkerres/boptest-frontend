@@ -2,10 +2,12 @@ openapi: 3.0.3
 info:
   title: BOPTEST Service API
   description: A REST API for emulating buildings for testing control systems.
-  version: 1.0.0
+  version: 0.7.0
 servers:
-  - url: http://127.0.0.1:5000
+  - url: http://localhost
     description: Local server
+  - url: http://api.boptest.net
+    description: NREL BOPTEST Service
 components:
   schemas:
     BoundedSignalMeta:
@@ -90,8 +92,18 @@ components:
         status:
           type: integer
           description: HTTP status code.
+  parameters:
+    TestId:
+      name: testid
+      in: path
+      required: true
+      description: The UUID of the test case.
+      schema:
+        type: string
 paths:
-  /inputs:
+  /inputs/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get metadata for inputs
       description: Returns metadata for input signals.
@@ -111,7 +123,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /measurements:
+  /measurements/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get metadata for measurements
       description: Returns metadata for measurement signals.
@@ -131,7 +145,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /forecast_points:
+  /forecast_points/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get metadata for forecast points
       description: Returns metadata for forecast point signals.
@@ -151,7 +167,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /forecast:
+  /forecast/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     put:
       summary: Submit a forecast query
       description: Sends a ForecastQuery payload and returns a TimeSeries response.
@@ -177,7 +195,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /results:
+  /results/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     put:
       summary: Submit a results query
       description: Sends a ResultsQuery payload and returns a TimeSeries response.
@@ -203,7 +223,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /advance:
+  /advance/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     post:
       summary: Advance the simulation
       description: Advances the simulation with optional input overwrites. The payload can include input values and activation flags for overwriting.
@@ -239,7 +261,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /name:
+  /name/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get the test case name
       description: Returns the loaded test case name.
@@ -264,7 +288,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /step:
+  /step/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get the simulation time step
       description: Returns the time step used in the simulation.
@@ -315,7 +341,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /scenario:
+  /scenario/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get the current scenario description
       description: Returns a description of the current scenario.
@@ -338,7 +366,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /kpi:
+  /kpi/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     get:
       summary: Get the Key Performance Indicators (KPIs)
       description: Returns the KPIs as calculated by the emulator.
@@ -361,7 +391,9 @@ paths:
                   status:
                     type: integer
                     example: 200
-  /initialize:
+  /initialize/{testid}:
+    parameters:
+      - $ref: '#/components/parameters/TestId'
     put:
       summary: Initialize the simulation
       description: Initializes the simulation with a start time and warmup period.

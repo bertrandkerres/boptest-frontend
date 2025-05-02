@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Box, Spinner, Table } from "@chakra-ui/react";
-import { getName, getStep, getScenario } from "@/client/sdk.gen";
+import { getNameByTestid, getStepByTestid, getScenarioByTestid } from "@/client/sdk.gen";
 
-const BoptestMeta = ({ serverUrl }: { serverUrl: string }) => {
+const BoptestMeta = ({ serverUrl, testId }: { serverUrl: string, testId: string }) => {
   const [testCaseName, setTestCaseName] = useState<string | null>(null);
   const [timeStep, setTimeStep] = useState<number | null>(null);
   const [scenario, setScenario] = useState<Record<string, string> | null>(null);
@@ -13,9 +13,9 @@ const BoptestMeta = ({ serverUrl }: { serverUrl: string }) => {
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const nameResponse = await getName();
-        const stepResponse = await getStep();
-        const scenarioResponse = await getScenario();
+        const nameResponse = await getNameByTestid({path: {testid: testId}});
+        const stepResponse = await getStepByTestid({path: {testid: testId}});
+        const scenarioResponse = await getScenarioByTestid({path: {testid: testId}});
 
         if (nameResponse.data?.payload?.name) {
           setTestCaseName(nameResponse.data.payload.name);
