@@ -20,24 +20,25 @@ export default function Page() {
 
   const params = useParams();
   const { serverUrl, testid } = params // Extract serverUrl and testId from the URL
+  const fullServerUrl = `http://${serverUrl}`
 
   useEffect(() => {
-    if (!serverUrl || !testid) return; // Wait until both parameters are available
+    if (!fullServerUrl || !testid) return; // Wait until both parameters are available
 
     const fetchVariables = async () => {
-      const measurementVars = await fetchMeasurementVariables(serverUrl as string, testid as string);
+      const measurementVars = await fetchMeasurementVariables(fullServerUrl as string, testid as string);
       setMeasurementVariables(measurementVars);
 
-      const forecastVars = await fetchForecastVariables(serverUrl as string, testid as string);
+      const forecastVars = await fetchForecastVariables(fullServerUrl as string, testid as string);
       setForecastVariables(forecastVars);
     };
 
     fetchVariables();
-  }, [serverUrl, testid]);
+  }, [fullServerUrl, testid]);
 
   const dummyForecastVar = forecastVariables.length > 0 ? forecastVariables[0].name : "UpperSetp[1]";
   const fetchData = async (pc: PlotConfig) => fetchSignalData(
-    serverUrl as string, testid as string, pc, dummyForecastVar
+    fullServerUrl as string, testid as string, pc, dummyForecastVar
   );
 
   return (
@@ -53,7 +54,7 @@ export default function Page() {
           <TestcaseMeta
             measurementVariables={measurementVariables}
             forecastVariables={forecastVariables}
-            serverUrl={`http://${serverUrl}`} // Add protocol back for display
+            serverUrl={fullServerUrl} // Add protocol back for display
             testId={testid as string}
           />
         </VStack>
