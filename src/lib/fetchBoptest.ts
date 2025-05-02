@@ -29,6 +29,7 @@ export const fetchForecastData = async (
 
   try {
     const response = await putForecastByTestid({
+      baseUrl: serverUrl,
       path: {testid: testId},
       body: body,
     });
@@ -66,6 +67,7 @@ export const fetchMeasurementData = async (
 
   try {
     const response = await putResultsByTestid({
+      baseUrl: serverUrl,
       path: {testid: testId},
       body: body,
     });
@@ -189,8 +191,14 @@ export const fetchSignalData = async (
 
 export const fetchMeasurementVariables = async (serverUrl: string, testId: string): Promise<VariableInfo[]> => {
   try {
-    const measurements = await getMeasurementsByTestid({path: {testid: testId}});
-    const inputs = await getInputsByTestid({path: {testid: testId}});
+    const measurements = await getMeasurementsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId}
+    });
+    const inputs = await getInputsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId}
+    });
 
     const measurementVariables = Object.entries(measurements.data?.payload || {}).map(
       ([name, { Description, Unit }]) => ({
@@ -215,9 +223,12 @@ export const fetchMeasurementVariables = async (serverUrl: string, testId: strin
   }
 };
 
-export const fetchForecastVariables = async (server: string, testid: string): Promise<VariableInfo[]> => {
+export const fetchForecastVariables = async (serverUrl: string, testid: string): Promise<VariableInfo[]> => {
   try {
-    const forecastPoints = await getForecastPointsByTestid({path: {testid: testid}});
+    const forecastPoints = await getForecastPointsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testid}
+    });
 
     return Object.entries(forecastPoints.data?.payload || {}).map(
       ([name, { Description, Unit }]) => ({

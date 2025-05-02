@@ -13,9 +13,18 @@ const BoptestMeta = ({ serverUrl, testId }: { serverUrl: string, testId: string 
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const nameResponse = await getNameByTestid({path: {testid: testId}});
-        const stepResponse = await getStepByTestid({path: {testid: testId}});
-        const scenarioResponse = await getScenarioByTestid({path: {testid: testId}});
+        const nameResponse = await getNameByTestid({
+          baseUrl: serverUrl,
+          path: {testid: testId}
+        });
+        const stepResponse = await getStepByTestid({
+          baseUrl: serverUrl,
+          path: {testid: testId}
+        });
+        const scenarioResponse = await getScenarioByTestid({
+          baseUrl: serverUrl,
+          path: {testid: testId}
+        });
 
         if (nameResponse.data?.payload?.name) {
           setTestCaseName(nameResponse.data.payload.name);
