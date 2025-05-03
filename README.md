@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BOPTEST-Viz
+This is a simple frontend to visualize building simulations running in BOPTEST.
 
-## Getting Started
+## Usage
 
-First, run the development server:
+### Installation
+Currently, this is only meant for local usage.
+You need [NodeJS](https://nodejs.org/en/download) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to run this locally.
 
+Install the required packages from the project root:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Running the frontend
+Run the server: Dev version (slow execution, automatic recompilation for source code changes)
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+or production version (pre-compiled, fast execution, somewhat stricter w.r.t. linting etc.)
+```bash
+npm run build # One-time, to compile
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Connecting to a testcase
+> [!IMPORTANT]
+> This frontend assumes the BOPTEST-Service API, as used from version `v0.7.0`.
 
-## Learn More
+> [!WARNING]
+> BOPTEST currently does not support [CORS headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS) per default. So you have to start your browser with disabled origin checks ([example for Chrome](https://stackoverflow.com/questions/3102819/disable-same-origin-policy-in-chrome)).
 
-To learn more about Next.js, take a look at the following resources:
+The frontend base URL per default is `http://localhost:3000`. In order to connect to a testcase, you need to add the BOPTEST server (without `http://` protocol specifier), and the `testId` as path parameters. So the complete URL is `http://localhost:3000/{boptestServer}/{testId}`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+For example, if you run BOPTEST on `localhost`, and your test case id is `aaa-bbb-ccc-ddd`, then open 
+[http://localhost:3000/localhost/aaa-bbb-ccc-ddd](http://localhost:3000/localhost/aaa-bbb-ccc-ddd) with your browser to fetch data for this test case.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+### Configuring the plots
+Currently, plots are configured using JSON files with the test case name, stored in the `public/defaultConfigs` folder. The frontend will query the test case name, and load the corresponding configuration automatically.
+The JSON file needs to return an array of `PlotConfig` objects as defined below:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```json
+[
+  // The following is an example of one PlotConfig object
+  {
+    "title": "string",
+    "measurement": {
+        "horizon": -87600, // Note: Negative values to look back in time
+        "interval": 3600,
+        "signals": [
+            {
+                "name": "string", // Match test case signal, e.g. "reaTZon_y"
+                "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }
+            }
+        ]
+    },
+    "forecast": [], // same schema as "measurement", but with positive values for "horizon"
+    "yLabel": "string"
+  }
+]
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Each `PlotConfig` object describes one plot. The plots are stacked vertically in order of appearance in the JSON configuration.
+
+## Tech stack
+* [Typescript](https://www.typescriptlang.org/docs/)
+* [React](https://react.dev/) + [Next.js](https://nextjs.org) for states, routing, etc.
+* [ChakraUI](https://chakra-ui.com/) for styling.
+* [heyapi](https://heyapi.dev/) for automatic client generation.
+* [plotly](https://plotly.com/javascript/) for the plots.
+
+
+
