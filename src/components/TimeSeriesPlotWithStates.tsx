@@ -1,11 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  VStack,
-  NumberInput,
-  Text
-} from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
 
 interface LineStyleConfig  {
@@ -30,15 +26,15 @@ export interface PlotConfig {
 
 export interface TimeSeriesPlotWithStatesProps {
   fetchSignalData: (plotConfig: PlotConfig) => Promise<Array<{ name: string; x: number[]; y: number[] }>>;
+  updateInterval: string; // Update frequency passed as a prop
 }
-
 
 const TimeSeriesPlotWithStates = ({
   fetchSignalData,
+  updateInterval,
 }: TimeSeriesPlotWithStatesProps) => {
   const [selectedSignals, setSelectedSignals] = useState<PlotConfig | null>(null);
   const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
-  const [updateInterval, setUpdateInterval] = useState<string>("5000");
 
   // Fetch initial signals from JSON file
   useEffect(() => {
@@ -50,7 +46,6 @@ const TimeSeriesPlotWithStates = ({
         setSelectedSignals(data);
 
         // Initialize plotData based on the fetched signals
-        console.log(data)
         const initPlotData = data.measurement.signals.map((s) => ({
           name: s.name,
           x: [],
@@ -69,10 +64,6 @@ const TimeSeriesPlotWithStates = ({
     fetchInitialSignals();
   }, []);
 
-  const handleUpdateIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUpdateInterval(event.target.value);
-  };
-
   useEffect(() => {
     const updateAllSignalData = async () => {
       if (selectedSignals) {
@@ -80,25 +71,13 @@ const TimeSeriesPlotWithStates = ({
         setPlotData(updatedSignalData);
       }
     };
-
-    let updateIntervalMs = parseInt(updateInterval, 10);
-    if (isNaN(updateIntervalMs) || updateIntervalMs < 1000) updateIntervalMs = 5000;
-    const intervalId = setInterval(updateAllSignalData, updateIntervalMs);
+    const intervalId = setInterval(updateAllSignalData, parseInt(updateInterval, 10));
 
     return () => clearInterval(intervalId);
   }, [selectedSignals, updateInterval]);
 
   return (
     <VStack width="100%">
-      <NumberInput.Root
-        value={updateInterval}
-        onChange={handleUpdateIntervalChange}
-        size="xs"
-      >
-        <NumberInput.Label><Text textStyle="xs">Update frequency (ms)</Text></NumberInput.Label>
-        <NumberInput.Control />
-        <NumberInput.Input />
-      </NumberInput.Root>
       <TimeSeriesPlot
         title="Time Series Plot"
         data={plotData.map((data) => {
