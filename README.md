@@ -1,4 +1,4 @@
-# BOPTEST-Viz
+# BOPTEST-Frontend
 This is a simple frontend to visualize building simulations running in BOPTEST.
 
 ## Usage
@@ -39,7 +39,10 @@ For example, if you run BOPTEST on `localhost`, and your test case id is `aaa-bb
 
 ### Configuring the plots
 Currently, plots are configured using JSON files with the test case name, stored in the `public/defaultConfigs` folder. The frontend will query the test case name, and load the corresponding configuration automatically.
-The JSON file needs to return an array of `PlotConfig` objects as defined below:
+The JSON file needs to return an array of objects as defined below.
+
+> [!WARNING]
+> Please note that the comments `// ...` are invalid json, so they have to be removed in the actual file.
 
 ```json
 [
@@ -62,7 +65,7 @@ The JSON file needs to return an array of `PlotConfig` objects as defined below:
 ]
 ```
 
-Each `PlotConfig` object describes one plot. The plots are stacked vertically in order of appearance in the JSON configuration.
+Each array item describes one plot. The plots are stacked vertically in order of appearance in the JSON configuration.
 
 ## Tech stack
 * [Typescript](https://www.typescriptlang.org/docs/)
