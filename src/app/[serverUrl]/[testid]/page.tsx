@@ -8,6 +8,8 @@ import {
   VStack,
   NumberInput,
   Text,
+  GridItem,
+  Grid,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
@@ -124,16 +126,18 @@ export default function Page() {
             testId={testid as string}
           />
         </VStack>
-        <VStack width="75%" gap={4}>
+        <Grid templateRows={`repeat(${selectedSignals?.length || 0}, 1fr)`} gap="6">
           {selectedSignals?.map((signalConfig, index) => (
-            <TimeSeriesPlotWithStates
-              key={index}
-              selectedSignals={signalConfig}
-              fetchSignalData={fetchData}
-              updateInterval={updateInterval} // Pass update frequency as a prop
-            />
+            <GridItem>
+              <TimeSeriesPlotWithStates
+                key={index}
+                selectedSignals={signalConfig}
+                fetchSignalData={fetchData}
+                updateInterval={updateInterval} // Pass update frequency as a prop
+              />
+            </GridItem>
           ))}
-        </VStack>
+        </Grid>
       </HStack>
       <Box pos="absolute" top="4" right="4">
         <ClientOnly fallback={<Skeleton w="10" h="10" rounded="md" />}>
