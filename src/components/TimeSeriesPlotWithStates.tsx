@@ -18,31 +18,17 @@ const TimeSeriesPlotWithStates = ({
 }: TimeSeriesPlotWithStatesProps) => {
   if (selectedSignals === null) return (<></>);
 
-  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
+  const initPlotData = selectedSignals.measurement.signals.map((s) => ({
+    name: s.name,
+    x: [],
+    y: [],
+  })).concat(selectedSignals.forecast.signals.map((s) => ({
+    name: s.name,
+    x: [],
+    y: [],
+  })));
 
-  // Fetch initial signals from JSON file
-  useEffect(() => {
-    const fetchInitialSignals = async () => {
-      try {
-
-        // Initialize plotData based on the fetched signals
-        const initPlotData = selectedSignals.measurement.signals.map((s) => ({
-          name: s.name,
-          x: [],
-          y: [],
-        })).concat(selectedSignals.forecast.signals.map((s) => ({
-          name: s.name,
-          x: [],
-          y: [],
-        })));
-        setPlotData(initPlotData);
-      } catch (error) {
-        console.error("Error loading initial signals:", error);
-      }
-    };
-
-    fetchInitialSignals();
-  }, []);
+  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>(initPlotData);
 
   useEffect(() => {
     const updateAllSignalData = async () => {
@@ -54,7 +40,7 @@ const TimeSeriesPlotWithStates = ({
     const intervalId = setInterval(updateAllSignalData, parseInt(updateInterval, 10));
 
     return () => clearInterval(intervalId);
-  }, [selectedSignals, updateInterval]);
+  }, [selectedSignals, fetchSignalData, updateInterval]);
 
   return (
     <VStack width="100%">
