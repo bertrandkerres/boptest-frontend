@@ -1,77 +1,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  VStack,
-  NumberInput,
-  Text
-} from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
-
-interface LineStyleConfig  {
-  lineStyle: "solid" | "dot" | "dash";
-  lineWidth: number;
-  color: string;
-}
-
-interface SignalDisplayConfig {
-  horizon: number;
-  interval: number;
-  signals: Array<{
-    name: string;
-    lineStyleConfig: LineStyleConfig;
-  }>
-}
-
-export interface PlotConfig {
-  measurement: SignalDisplayConfig;
-  forecast: SignalDisplayConfig;
-}
+import { PlotConfig } from "@/app/[serverUrl]/[testid]/page";
 
 export interface TimeSeriesPlotWithStatesProps {
+  selectedSignals: PlotConfig | null;
+  updateInterval: string; // Update frequency passed as a prop
   fetchSignalData: (plotConfig: PlotConfig) => Promise<Array<{ name: string; x: number[]; y: number[] }>>;
 }
 
-
 const TimeSeriesPlotWithStates = ({
+  selectedSignals,
+  updateInterval,
   fetchSignalData,
 }: TimeSeriesPlotWithStatesProps) => {
-  const [selectedSignals, setSelectedSignals] = useState<PlotConfig | null>(null);
-  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
-  const [updateInterval, setUpdateInterval] = useState<string>("5000");
 
-  // Fetch initial signals from JSON file
-  useEffect(() => {
-    const fetchInitialSignals = async () => {
-      try {
-        const response = await fetch("defaultConfigs/bestest_hydronic_heat_pump.json");
-        const jsonData: PlotConfig[] = await response.json();
-        const data = jsonData[0];
-        setSelectedSignals(data);
+  const initPlotData = (selectedSignals === null) ? [] : (
+    selectedSignals.measurement.signals.map((s) => ({
+      name: s.name,
+      x: [],
+      y: [],
+    })).concat(selectedSignals.forecast.signals.map((s) => ({
+      name: s.name,
+      x: [],
+      y: [],
+    })))
+  );
 
-        // Initialize plotData based on the fetched signals
-        console.log(data)
-        const initPlotData = data.measurement.signals.map((s) => ({
-          name: s.name,
-          x: [],
-          y: [],
-        })).concat(data.forecast.signals.map((s) => ({
-          name: s.name,
-          x: [],
-          y: [],
-        })));
-        setPlotData(initPlotData);
-      } catch (error) {
-        console.error("Error loading initial signals:", error);
-      }
-    };
-
-    fetchInitialSignals();
-  }, []);
-
-  const handleUpdateIntervalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUpdateInterval(event.target.value);
-  };
+  const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>(initPlotData);
 
   useEffect(() => {
     const updateAllSignalData = async () => {
@@ -80,27 +38,15 @@ const TimeSeriesPlotWithStates = ({
         setPlotData(updatedSignalData);
       }
     };
-
-    let updateIntervalMs = parseInt(updateInterval, 10);
-    if (isNaN(updateIntervalMs) || updateIntervalMs < 1000) updateIntervalMs = 5000;
-    const intervalId = setInterval(updateAllSignalData, updateIntervalMs);
+    const intervalId = setInterval(updateAllSignalData, parseInt(updateInterval, 10));
 
     return () => clearInterval(intervalId);
-  }, [selectedSignals, updateInterval]);
+  }, [selectedSignals, fetchSignalData, updateInterval]);
 
-  return (
+  return (selectedSignals === null) ? (<></>) : (
     <VStack width="100%">
-      <NumberInput.Root
-        value={updateInterval}
-        onChange={handleUpdateIntervalChange}
-        size="xs"
-      >
-        <NumberInput.Label><Text textStyle="xs">Update frequency (ms)</Text></NumberInput.Label>
-        <NumberInput.Control />
-        <NumberInput.Input />
-      </NumberInput.Root>
       <TimeSeriesPlot
-        title="Time Series Plot"
+        title={selectedSignals.title}
         data={plotData.map((data) => {
           const config = selectedSignals?.measurement.signals.find((signal) => signal.name === data.name) ||
             selectedSignals?.forecast.signals.find((signal) => signal.name === data.name);
@@ -111,7 +57,7 @@ const TimeSeriesPlotWithStates = ({
             color: config?.lineStyleConfig.color,
           };
         })}
-        yAxisLabel="Value"
+        yAxisLabel={selectedSignals.yLabel}
       />
     </VStack>
   );

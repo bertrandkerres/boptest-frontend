@@ -1,0 +1,169 @@
+"use client";
+
+import {
+  Box,
+  ClientOnly,
+  HStack,
+  Skeleton,
+  VStack,
+  NumberInput,
+  Text,
+  GridItem,
+  Grid,
+} from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import TestcaseMeta from "@/components/TestcaseMeta";
+import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
+import { fetchSignalData, fetchForecastVariables, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
+import TimeSeriesPlotWithStates from "@/components/TimeSeriesPlotWithStates";
+import { getNameByTestid } from "@/client/sdk.gen";
+
+
+interface LineStyleConfig  {
+  lineStyle: "solid" | "dot" | "dash";
+  lineWidth: number;
+  color: string;
+}
+
+interface SignalDisplayConfig {
+  horizon: number;
+  interval: number;
+  signals: Array<{
+    name: string;
+    lineStyleConfig: LineStyleConfig;
+  }>
+}
+
+export interface PlotConfig {
+  title: string;
+  measurement: SignalDisplayConfig;
+  forecast: SignalDisplayConfig;
+  yLabel: string;
+}
+
+export default function Page() {
+  const params = useParams();
+  const { serverUrl, testid } = params; // Extract serverUrl and testId from the URL
+  const fullServerUrl = `http://${serverUrl}`;
+
+  const [configName, setConfigName] = useState<string>("");
+
+  const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
+  const [forecastVariables, setForecastVariables] = useState<VariableInfo[]>([]);
+
+
+  useEffect(() => {
+    if (!fullServerUrl || !testid) return; // Wait until both parameters are available
+
+    const fetchVariables = async () => {
+      const measurementVars = await fetchMeasurementVariables(fullServerUrl as string, testid as string);
+      setMeasurementVariables(measurementVars);
+
+      const forecastVars = await fetchForecastVariables(fullServerUrl as string, testid as string);
+      setForecastVariables(forecastVars);
+
+      const nameResponse = await getNameByTestid({
+          baseUrl: fullServerUrl,
+          path: {testid: testid as string}
+      });
+      if (nameResponse.data?.payload?.name) {
+        setConfigName(nameResponse.data.payload.name);
+      }
+    };
+
+    fetchVariables();
+  }, [fullServerUrl, testid]);
+
+  const dummyForecastVar = forecastVariables.length > 0 ? forecastVariables[0].name : "UpperSetp[1]";
+  const fetchData = async (pc: PlotConfig) => fetchSignalData(
+    fullServerUrl as string, testid as string, pc, dummyForecastVar
+  );
+
+  const [updateInterval, setUpdateInterval] = useState<string>("5000"); // Manage update frequency here
+
+  const handleUpdateIntervalChange = (value: string) => {
+    const interval = parseInt(value, 10);
+    if (!isNaN(interval) && interval >= 1000) {
+      setUpdateInterval(value);
+    }
+  };
+
+  const [selectedSignals, setSelectedSignals] = useState<PlotConfig[] | null>(null);
+
+  // Fetch initial signals from JSON file
+  useEffect(() => {
+    const fetchInitialSignals = async () => {
+      if (configName !== "") {
+        try {
+          console.log("Loading config: ", configName)
+          const response = await fetch(`/defaultConfigs/${configName}.json`);
+          const jsonData: PlotConfig[] = await response.json();
+          setSelectedSignals(jsonData);
+
+        } catch (error) {
+          console.error("Error loading initial signals:", error);
+          setSelectedSignals([]);
+        };
+      };
+    }
+
+    fetchInitialSignals();
+  }, [configName]);  
+
+  return (
+    <>
+      <HStack align="start" gap={0}>
+        <VStack
+          maxW="25%"
+          borderRight="1px solid #e2e8f0"
+          align="left"
+          height="100vh" // Set the height to fill the viewport
+          overflowY="auto" // Enable vertical scrolling
+        >
+          <NumberInput.Root
+            maxW="200px"
+            value={updateInterval}
+            onValueChange={(e) => handleUpdateIntervalChange(e.value)}
+            size="sm"
+            step={1000}
+          >
+            <NumberInput.Label>
+              <Text textStyle="sm">Update frequency (ms)</Text>
+            </NumberInput.Label>
+            <NumberInput.Control />
+            <NumberInput.Input />
+          </NumberInput.Root>
+          <TestcaseMeta
+            measurementVariables={measurementVariables}
+            forecastVariables={forecastVariables}
+            serverUrl={fullServerUrl} // Add protocol back for display
+            testId={testid as string}
+          />
+        </VStack>
+        <Grid
+          flex="1"
+          templateRows={`repeat(${selectedSignals?.length || 0}, 1fr)`}
+          gap="6"
+          overflowY="auto"
+          height="100vh"
+        >
+          {selectedSignals?.map((signalConfig, index) => (
+            <GridItem key={index}>
+              <TimeSeriesPlotWithStates
+                selectedSignals={signalConfig}
+                fetchSignalData={fetchData}
+                updateInterval={updateInterval} // Pass update frequency as a prop
+              />
+            </GridItem>
+          ))}
+        </Grid>
+      </HStack>
+      <Box pos="absolute" top="4" right="4">
+        <ClientOnly fallback={<Skeleton w="10" h="10" rounded="md" />}>
+          <ColorModeToggle />
+        </ClientOnly>
+      </Box>
+    </>
+  );
+}

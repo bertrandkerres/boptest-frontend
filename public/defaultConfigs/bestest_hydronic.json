@@ -6,9 +6,9 @@
       "horizon": -87600,
       "interval": 3600,
       "signals": [
-        { "name": "reaTZon_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
+        { "name": "reaTRoo_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
         { "name": "weaSta_reaWeaTDryBul_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "blue" }},
-        { "name": "reaTSup_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+        { "name": "oveTSetSup_u", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
       ]
     },
     "forecast": {
@@ -46,7 +46,7 @@
       "horizon": -36000,
       "interval": 3600,
       "signals": [
-        { "name": "reaQFloHea_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+        { "name": "reaQHea_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
       ]
     },
     "forecast": {

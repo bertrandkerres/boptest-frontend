@@ -18,7 +18,11 @@ interface TimeSeriesPlotProps {
   yAxisLabel: string; // Label for the y-axis
 }
 
-const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
+const TimeSeriesPlot = (
+  { title, data, yAxisLabel }: TimeSeriesPlotProps,
+  width: number = 800,
+  height: number = 480,      
+) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -27,6 +31,7 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
 
   if (!isClient) return null;
 
+  console.log("Drawing plot ", title)
   return (
     <Plot
       data={data.map((series) => ({
@@ -42,7 +47,7 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
         },
       }))}
       layout={{
-        title: title,
+        title: { text: title },
         xaxis: { title: { text: "Time" } },
         yaxis: { title: { text: yAxisLabel } },
         margin: { l: 50, r: 30, t: 50, b: 50 },
@@ -51,7 +56,9 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
           x: 1,
           xanchor: "right",
           y: 1
-        }
+        },
+        width: width,
+        height: height
       }}
       style={{ width: "100%", height: "100%" }}
       config={{ responsive: true }}

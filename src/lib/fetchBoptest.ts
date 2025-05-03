@@ -1,5 +1,5 @@
-import { getForecastPoints, getInputs, getMeasurements, getStep, putForecast, putResults } from "@/client/sdk.gen";
-import { PlotConfig } from "@/components/TimeSeriesPlotWithStates";
+import { getForecastPointsByTestid, getInputsByTestid, getMeasurementsByTestid, getStepByTestid, putForecastByTestid, putResultsByTestid } from "@/client/sdk.gen";
+import { PlotConfig } from "@/app/[serverUrl]/[testid]/page";
 
 export type TimeSeriesData = {
   x: number[];
@@ -14,6 +14,8 @@ export type VariableInfo = {
 };
 
 export const fetchForecastData = async (
+  serverUrl: string,
+  testId: string,
   pointNames: string[],
   horizon: number = 86400,
   interval: number = 3600
@@ -26,7 +28,9 @@ export const fetchForecastData = async (
   console.log("Querying /forecast: ", body);
 
   try {
-    const response = await putForecast({
+    const response = await putForecastByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId},
       body: body,
     });
 
@@ -47,6 +51,8 @@ export const fetchForecastData = async (
 };
 
 export const fetchMeasurementData = async (
+  serverUrl: string,
+  testId: string,
   pointNames: string[],
   startTime: number,
   finalTime: number,
@@ -60,7 +66,9 @@ export const fetchMeasurementData = async (
   console.log("Querying /results: ", body);
 
   try {
-    const response = await putResults({
+    const response = await putResultsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId},
       body: body,
     });
 
@@ -72,7 +80,7 @@ export const fetchMeasurementData = async (
 
         // Handle default value for stepsize
         if (interval === 0) {
-          const r = await getStep();
+          const r = await getStepByTestid({path: {testid: testId}});
           if (r.data?.payload) interval = r.data.payload;
         }
 
@@ -116,6 +124,8 @@ export const fetchMeasurementData = async (
 };
 
 export const fetchSignalData = async (
+  serverUrl: string,
+  testId: string,
   plotConfig: PlotConfig,
   dummyVarName: string
 ): Promise<Array<{ name: string; x: number[]; y: number[] }>> => {
@@ -124,6 +134,8 @@ export const fetchSignalData = async (
     // Fetch data for all forecast signals
     const forecastPromises = plotConfig.forecast.signals.map((signal) =>
       fetchForecastData(
+        serverUrl,
+        testId,
         [signal.name], // Pass the signal name as an array
         plotConfig.forecast.horizon, // Horizon
         plotConfig.forecast.interval // Interval
@@ -141,7 +153,9 @@ export const fetchSignalData = async (
       t_plant = forecastData[0].x[0]
     } else {
       const dummySignals = [dummyVarName];
-      const dummyForecast = await fetchForecastData(dummySignals, 7200, 3600);
+      const dummyForecast = await fetchForecastData(
+        serverUrl, testId, dummySignals, 7200, 3600
+      );
       t_plant = dummyForecast[0].x[0];
     }
 
@@ -149,6 +163,8 @@ export const fetchSignalData = async (
     const t_start = Math.max(t_plant + plotConfig.measurement.horizon, 0);
     const measurementPromises = plotConfig.measurement.signals.map((signal) =>
       fetchMeasurementData(
+        serverUrl,
+        testId,
         [signal.name], // Pass the signal name as an array
         t_start, // Start time
         t_plant,
@@ -173,10 +189,16 @@ export const fetchSignalData = async (
 };
 
 
-export const fetchMeasurementVariables = async (): Promise<VariableInfo[]> => {
+export const fetchMeasurementVariables = async (serverUrl: string, testId: string): Promise<VariableInfo[]> => {
   try {
-    const measurements = await getMeasurements();
-    const inputs = await getInputs();
+    const measurements = await getMeasurementsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId}
+    });
+    const inputs = await getInputsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testId}
+    });
 
     const measurementVariables = Object.entries(measurements.data?.payload || {}).map(
       ([name, { Description, Unit }]) => ({
@@ -201,9 +223,12 @@ export const fetchMeasurementVariables = async (): Promise<VariableInfo[]> => {
   }
 };
 
-export const fetchForecastVariables = async (): Promise<VariableInfo[]> => {
+export const fetchForecastVariables = async (serverUrl: string, testid: string): Promise<VariableInfo[]> => {
   try {
-    const forecastPoints = await getForecastPoints();
+    const forecastPoints = await getForecastPointsByTestid({
+      baseUrl: serverUrl,
+      path: {testid: testid}
+    });
 
     return Object.entries(forecastPoints.data?.payload || {}).map(
       ([name, { Description, Unit }]) => ({
