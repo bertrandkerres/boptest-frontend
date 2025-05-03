@@ -126,11 +126,16 @@ export default function Page() {
             testId={testid as string}
           />
         </VStack>
-        <Grid templateRows={`repeat(${selectedSignals?.length || 0}, 1fr)`} gap="6">
+        <Grid
+          flex="1"
+          templateRows={`repeat(${selectedSignals?.length || 0}, 1fr)`}
+          gap="6"
+          overflowY="auto"
+          height="100vh"
+        >
           {selectedSignals?.map((signalConfig, index) => (
-            <GridItem>
+            <GridItem key={index}>
               <TimeSeriesPlotWithStates
-                key={index}
                 selectedSignals={signalConfig}
                 fetchSignalData={fetchData}
                 updateInterval={updateInterval} // Pass update frequency as a prop
