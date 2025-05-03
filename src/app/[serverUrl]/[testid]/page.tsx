@@ -40,13 +40,13 @@ export interface PlotConfig {
 }
 
 export default function Page() {
-  const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
-  const [forecastVariables, setForecastVariables] = useState<VariableInfo[]>([]);
-  const [updateInterval, setUpdateInterval] = useState<string>("5000"); // Manage update frequency here
-
   const params = useParams();
   const { serverUrl, testid } = params; // Extract serverUrl and testId from the URL
   const fullServerUrl = `http://${serverUrl}`;
+
+  const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
+  const [forecastVariables, setForecastVariables] = useState<VariableInfo[]>([]);
+
 
   useEffect(() => {
     if (!fullServerUrl || !testid) return; // Wait until both parameters are available
@@ -66,6 +66,8 @@ export default function Page() {
   const fetchData = async (pc: PlotConfig) => fetchSignalData(
     fullServerUrl as string, testid as string, pc, dummyForecastVar
   );
+
+  const [updateInterval, setUpdateInterval] = useState<string>("5000"); // Manage update frequency here
 
   const handleUpdateIntervalChange = (value: string) => {
     const interval = parseInt(value, 10);
