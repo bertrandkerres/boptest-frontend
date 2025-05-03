@@ -3,54 +3,34 @@
 import { useEffect, useState } from "react";
 import { VStack } from "@chakra-ui/react";
 import TimeSeriesPlot from "@/components/TimeSeriesPlot";
-
-interface LineStyleConfig  {
-  lineStyle: "solid" | "dot" | "dash";
-  lineWidth: number;
-  color: string;
-}
-
-interface SignalDisplayConfig {
-  horizon: number;
-  interval: number;
-  signals: Array<{
-    name: string;
-    lineStyleConfig: LineStyleConfig;
-  }>
-}
-
-export interface PlotConfig {
-  measurement: SignalDisplayConfig;
-  forecast: SignalDisplayConfig;
-}
+import { PlotConfig } from "@/app/[serverUrl]/[testid]/page";
 
 export interface TimeSeriesPlotWithStatesProps {
-  fetchSignalData: (plotConfig: PlotConfig) => Promise<Array<{ name: string; x: number[]; y: number[] }>>;
+  selectedSignals: PlotConfig | null;
   updateInterval: string; // Update frequency passed as a prop
+  fetchSignalData: (plotConfig: PlotConfig) => Promise<Array<{ name: string; x: number[]; y: number[] }>>;
 }
 
 const TimeSeriesPlotWithStates = ({
-  fetchSignalData,
+  selectedSignals,
   updateInterval,
+  fetchSignalData,
 }: TimeSeriesPlotWithStatesProps) => {
-  const [selectedSignals, setSelectedSignals] = useState<PlotConfig | null>(null);
+  if (selectedSignals === null) return (<></>);
+
   const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>([]);
 
   // Fetch initial signals from JSON file
   useEffect(() => {
     const fetchInitialSignals = async () => {
       try {
-        const response = await fetch("/defaultConfigs/bestest_hydronic_heat_pump.json");
-        const jsonData: PlotConfig[] = await response.json();
-        const data = jsonData[0];
-        setSelectedSignals(data);
 
         // Initialize plotData based on the fetched signals
-        const initPlotData = data.measurement.signals.map((s) => ({
+        const initPlotData = selectedSignals.measurement.signals.map((s) => ({
           name: s.name,
           x: [],
           y: [],
-        })).concat(data.forecast.signals.map((s) => ({
+        })).concat(selectedSignals.forecast.signals.map((s) => ({
           name: s.name,
           x: [],
           y: [],

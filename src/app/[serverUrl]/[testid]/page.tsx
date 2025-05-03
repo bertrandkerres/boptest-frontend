@@ -14,7 +14,28 @@ import { useParams } from "next/navigation";
 import TestcaseMeta from "@/components/TestcaseMeta";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchSignalData, fetchForecastVariables, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
-import TimeSeriesPlotWithStates, { PlotConfig } from "@/components/TimeSeriesPlotWithStates";
+import TimeSeriesPlotWithStates from "@/components/TimeSeriesPlotWithStates";
+
+
+interface LineStyleConfig  {
+  lineStyle: "solid" | "dot" | "dash";
+  lineWidth: number;
+  color: string;
+}
+
+interface SignalDisplayConfig {
+  horizon: number;
+  interval: number;
+  signals: Array<{
+    name: string;
+    lineStyleConfig: LineStyleConfig;
+  }>
+}
+
+export interface PlotConfig {
+  measurement: SignalDisplayConfig;
+  forecast: SignalDisplayConfig;
+}
 
 export default function Page() {
   const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
@@ -51,6 +72,24 @@ export default function Page() {
     }
   };
 
+  const [selectedSignals, setSelectedSignals] = useState<PlotConfig[] | null>(null);
+
+  // Fetch initial signals from JSON file
+  useEffect(() => {
+    const fetchInitialSignals = async () => {
+      try {
+        const response = await fetch("/defaultConfigs/bestest_hydronic_heat_pump.json");
+        const jsonData: PlotConfig[] = await response.json();
+        setSelectedSignals(jsonData);
+
+      } catch (error) {
+        console.error("Error loading initial signals:", error);
+      }
+    };
+
+    fetchInitialSignals();
+  }, []);  
+
   return (
     <>
       <HStack align="start" gap={0}>
@@ -81,10 +120,16 @@ export default function Page() {
             testId={testid as string}
           />
         </VStack>
-        <TimeSeriesPlotWithStates
-          fetchSignalData={fetchData}
-          updateInterval={updateInterval} // Pass update frequency as a prop
-        />
+        <VStack width="75%" gap={4}>
+          {selectedSignals?.map((signalConfig, index) => (
+            <TimeSeriesPlotWithStates
+              key={index}
+              selectedSignals={signalConfig}
+              fetchSignalData={fetchData}
+              updateInterval={updateInterval} // Pass update frequency as a prop
+            />
+          ))}
+        </VStack>
       </HStack>
       <Box pos="absolute" top="4" right="4">
         <ClientOnly fallback={<Skeleton w="10" h="10" rounded="md" />}>
