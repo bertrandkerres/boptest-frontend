@@ -1,5 +1,4 @@
 "use client";
-import { Heading } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
@@ -44,7 +43,7 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
         },
       }))}
       layout={{
-        title: title,
+        title: { text: title },
         xaxis: { title: { text: "Time" } },
         yaxis: { title: { text: yAxisLabel } },
         margin: { l: 50, r: 30, t: 50, b: 50 },

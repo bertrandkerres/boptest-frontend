@@ -16,17 +16,18 @@ const TimeSeriesPlotWithStates = ({
   updateInterval,
   fetchSignalData,
 }: TimeSeriesPlotWithStatesProps) => {
-  if (selectedSignals === null) return (<></>);
 
-  const initPlotData = selectedSignals.measurement.signals.map((s) => ({
-    name: s.name,
-    x: [],
-    y: [],
-  })).concat(selectedSignals.forecast.signals.map((s) => ({
-    name: s.name,
-    x: [],
-    y: [],
-  })));
+  const initPlotData = (selectedSignals === null) ? [] : (
+    selectedSignals.measurement.signals.map((s) => ({
+      name: s.name,
+      x: [],
+      y: [],
+    })).concat(selectedSignals.forecast.signals.map((s) => ({
+      name: s.name,
+      x: [],
+      y: [],
+    })))
+  );
 
   const [plotData, setPlotData] = useState<Array<{ name: string; x: number[]; y: number[] }>>(initPlotData);
 
@@ -42,7 +43,7 @@ const TimeSeriesPlotWithStates = ({
     return () => clearInterval(intervalId);
   }, [selectedSignals, fetchSignalData, updateInterval]);
 
-  return (
+  return (selectedSignals === null) ? (<></>) : (
     <VStack width="100%">
       <TimeSeriesPlot
         title={selectedSignals.title}

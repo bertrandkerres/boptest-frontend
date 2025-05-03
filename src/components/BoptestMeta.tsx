@@ -45,7 +45,7 @@ const BoptestMeta = ({ serverUrl, testId }: { serverUrl: string, testId: string 
     };
 
     fetchMetadata();
-  }, []);
+  }, [serverUrl, testId]);
 
   if (loading) {
     return (

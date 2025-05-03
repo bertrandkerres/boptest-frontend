@@ -1,5 +1,5 @@
 import { getForecastPointsByTestid, getInputsByTestid, getMeasurementsByTestid, getStepByTestid, putForecastByTestid, putResultsByTestid } from "@/client/sdk.gen";
-import { PlotConfig } from "@/components/TimeSeriesPlotWithStates";
+import { PlotConfig } from "@/app/[serverUrl]/[testid]/page";
 
 export type TimeSeriesData = {
   x: number[];
