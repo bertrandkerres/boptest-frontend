@@ -33,8 +33,10 @@ interface SignalDisplayConfig {
 }
 
 export interface PlotConfig {
+  title: string;
   measurement: SignalDisplayConfig;
   forecast: SignalDisplayConfig;
+  yLabel: string;
 }
 
 export default function Page() {

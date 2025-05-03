@@ -59,7 +59,7 @@ const TimeSeriesPlotWithStates = ({
   return (
     <VStack width="100%">
       <TimeSeriesPlot
-        title="Time Series Plot"
+        title={selectedSignals.title}
         data={plotData.map((data) => {
           const config = selectedSignals?.measurement.signals.find((signal) => signal.name === data.name) ||
             selectedSignals?.forecast.signals.find((signal) => signal.name === data.name);
@@ -70,7 +70,7 @@ const TimeSeriesPlotWithStates = ({
             color: config?.lineStyleConfig.color,
           };
         })}
-        yAxisLabel="Value"
+        yAxisLabel={selectedSignals.yLabel}
       />
     </VStack>
   );

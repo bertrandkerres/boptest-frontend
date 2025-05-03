@@ -1,10 +1,13 @@
 [
   {
+    "title": "Temperatures",
+    "yLabel": "T [K]",
     "measurement": {
       "horizon": -87600,
       "interval": 3600,
       "signals": [
         { "name": "reaTZon_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
+        { "name": "weaSta_reaWeaTDryBul_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "blue" }},
         { "name": "reaTSup_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
       ]
     },
@@ -13,26 +16,25 @@
       "interval": 3600,
       "signals": [
         { "name": "LowerSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
-        { "name": "UpperSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }}
+        { "name": "UpperSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
+        { "name": "TDryBul", "lineStyleConfig": {"lineStyle": "dash", "lineWidth": 1, "color": "blue" }}
       ]
     }
   },
   {
+    "title": "Heating",
+    "yLabel": "Qdot [W]",
     "measurement": {
-      "horizon": -87600,
+      "horizon": -36000,
       "interval": 3600,
       "signals": [
-        { "name": "reaTZon_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
-        { "name": "reaTSup_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+        { "name": "reaQFloHea_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
       ]
     },
     "forecast": {
       "horizon": 87600,
       "interval": 3600,
-      "signals": [
-        { "name": "LowerSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
-        { "name": "UpperSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }}
-      ]
+      "signals": []
     }
   }  
 ]

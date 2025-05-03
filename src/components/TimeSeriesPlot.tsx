@@ -1,4 +1,5 @@
 "use client";
+import { Heading } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
@@ -27,6 +28,7 @@ const TimeSeriesPlot = ({ title, data, yAxisLabel }: TimeSeriesPlotProps) => {
 
   if (!isClient) return null;
 
+  console.log("Drawing plot ", title)
   return (
     <Plot
       data={data.map((series) => ({
