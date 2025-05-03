@@ -17,6 +17,7 @@ import TestcaseMeta from "@/components/TestcaseMeta";
 import { ColorModeToggle } from "@/components/ui/color-mode-toggle";
 import { fetchSignalData, fetchForecastVariables, fetchMeasurementVariables, VariableInfo } from "@/lib/fetchBoptest";
 import TimeSeriesPlotWithStates from "@/components/TimeSeriesPlotWithStates";
+import { getNameByTestid } from "@/client/sdk.gen";
 
 
 interface LineStyleConfig  {
@@ -46,6 +47,8 @@ export default function Page() {
   const { serverUrl, testid } = params; // Extract serverUrl and testId from the URL
   const fullServerUrl = `http://${serverUrl}`;
 
+  const [configName, setConfigName] = useState<string>("");
+
   const [measurementVariables, setMeasurementVariables] = useState<VariableInfo[]>([]);
   const [forecastVariables, setForecastVariables] = useState<VariableInfo[]>([]);
 
@@ -59,6 +62,14 @@ export default function Page() {
 
       const forecastVars = await fetchForecastVariables(fullServerUrl as string, testid as string);
       setForecastVariables(forecastVars);
+
+      const nameResponse = await getNameByTestid({
+          baseUrl: fullServerUrl,
+          path: {testid: testid as string}
+      });
+      if (nameResponse.data?.payload?.name) {
+        setConfigName(nameResponse.data.payload.name);
+      }
     };
 
     fetchVariables();
@@ -83,18 +94,22 @@ export default function Page() {
   // Fetch initial signals from JSON file
   useEffect(() => {
     const fetchInitialSignals = async () => {
-      try {
-        const response = await fetch("/defaultConfigs/bestest_hydronic_heat_pump.json");
-        const jsonData: PlotConfig[] = await response.json();
-        setSelectedSignals(jsonData);
+      if (configName !== "") {
+        try {
+          console.log("Loading config: ", configName)
+          const response = await fetch(`/defaultConfigs/${configName}.json`);
+          const jsonData: PlotConfig[] = await response.json();
+          setSelectedSignals(jsonData);
 
-      } catch (error) {
-        console.error("Error loading initial signals:", error);
-      }
-    };
+        } catch (error) {
+          console.error("Error loading initial signals:", error);
+          setSelectedSignals([]);
+        };
+      };
+    }
 
     fetchInitialSignals();
-  }, []);  
+  }, [configName]);  
 
   return (
     <>

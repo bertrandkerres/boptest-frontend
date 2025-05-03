@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Temperatures",
+    "yLabel": "T [K]",
+    "measurement": {
+      "horizon": -87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "reaTRoo_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }},
+        { "name": "weaSta_reaWeaTDryBul_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "blue" }},
+        { "name": "oveTSetSup_u", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+      ]
+    },
+    "forecast": {
+      "horizon": 87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "LowerSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
+        { "name": "UpperSetp[1]", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }},
+        { "name": "TDryBul", "lineStyleConfig": {"lineStyle": "dash", "lineWidth": 1, "color": "blue" }}
+      ]
+    }
+  },
+  {
+    "title": "Solar Irradiation",
+    "yLabel": "W/m2",
+    "measurement": {
+      "horizon": -87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "weaSta_reaWeaHGloHor_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "black" }}
+      ]
+    },
+    "forecast": {
+      "horizon": 87600,
+      "interval": 3600,
+      "signals": [
+        { "name": "HGloHor", "lineStyleConfig": {"lineStyle": "dot", "lineWidth": 1, "color": "black" }}
+      ]
+    }
+  },
+  {
+    "title": "Heating",
+    "yLabel": "Qdot [W]",
+    "measurement": {
+      "horizon": -36000,
+      "interval": 3600,
+      "signals": [
+        { "name": "reaQHea_y", "lineStyleConfig": {"lineStyle": "solid", "lineWidth": 1, "color": "red" }}
+      ]
+    },
+    "forecast": {
+      "horizon": 87600,
+      "interval": 3600,
+      "signals": []
+    }
+  }
+]
