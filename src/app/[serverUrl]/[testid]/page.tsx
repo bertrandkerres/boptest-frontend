@@ -45,7 +45,7 @@ export interface PlotConfig {
 export default function Page() {
   const params = useParams();
   const { serverUrl, testid } = params; // Extract serverUrl and testId from the URL
-  const fullServerUrl = `http://${serverUrl}`;
+  const fullServerUrl = `http://${decodeURIComponent(serverUrl as string)}`;
 
   const [configName, setConfigName] = useState<string>("");
 
