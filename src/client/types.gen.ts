@@ -59,29 +59,36 @@ export type ResultsQuery = {
      */
     point_names?: Array<string>;
     /**
-     * Start time of the results query (epoch time).
+     * Start time of the results query (seconds since Jan 1st, 00:00:00).
      */
     start_time?: number;
     /**
-     * Final time of the results query (epoch time).
+     * Final time of the results query (seconds since Jan 1st, 00:00:00).
      */
     final_time?: number;
 };
 
+/**
+ * Time series response. Always includes a "time" array (seconds since Jan 1st, 00:00:00) and any number of series arrays keyed by signal name.
+ */
 export type TimeSeries = {
     [key: string]: Array<number>;
 };
 
-export type StandardResponse = {
+export type SimResponse = {
     /**
      * A message describing the response.
      */
     message?: string;
     /**
-     * The response payload.
+     * Current values of all input and measurement signals; always includes "time".
      */
     payload?: {
-        [key: string]: unknown;
+        /**
+         * Current simulation time (seconds since Jan 1st, 00:00:00).
+         */
+        time: number;
+        [key: string]: number;
     };
     /**
      * HTTP status code.
@@ -90,9 +97,236 @@ export type StandardResponse = {
 };
 
 /**
+ * Standard KPIs.
+ */
+export type KpiResponse = {
+    /**
+     * HVAC energy total in kWh/m2.
+     */
+    ener_tot?: number;
+    /**
+     * HVAC energy cost in $/m2 or Euro/m2.
+     */
+    cost_tot?: number;
+    /**
+     * HVAC energy emissions in kgCO2e/m2.
+     */
+    emis_tot?: number;
+    /**
+     * HVAC peak electrical demand in kW/m2.
+     */
+    pele_tot?: number;
+    /**
+     * HVAC peak gas demand in kW/m2.
+     */
+    pgas_tot?: number;
+    /**
+     * HVAC peak district heating demand in kW/m2.
+     */
+    pdih_tot?: number;
+    /**
+     * Thermal discomfort in Kh/zone.
+     */
+    tdis_tot?: number;
+    /**
+     * Indoor air quality discomfort in ppmh/zone.
+     */
+    idis_tot?: number;
+    /**
+     * Computational time ratio in s/s.
+     */
+    time_rat?: number;
+};
+
+/**
  * The UUID of the test case.
  */
 export type TestId = string;
+
+export type GetTestcasesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/testcases';
+};
+
+export type GetTestcasesResponses = {
+    /**
+     * Array of test case descriptors.
+     */
+    200: Array<{
+        /**
+         * The identifier/name of the test case.
+         */
+        testcaseid: string;
+    }>;
+};
+
+export type GetTestcasesResponse = GetTestcasesResponses[keyof GetTestcasesResponses];
+
+export type PostTestcasesByTestcaseNameSelectData = {
+    /**
+     * Optional selection parameters (implementation-specific).
+     */
+    body: {
+        [key: string]: unknown;
+    };
+    path: {
+        /**
+         * The name of the test case to select.
+         */
+        testcase_name: string;
+    };
+    query?: never;
+    url: '/testcases/{testcase_name}/select';
+};
+
+export type PostTestcasesByTestcaseNameSelectResponses = {
+    /**
+     * Test case selected successfully.
+     */
+    200: {
+        /**
+         * UUID for the newly started test.
+         */
+        testid: string;
+    };
+};
+
+export type PostTestcasesByTestcaseNameSelectResponse = PostTestcasesByTestcaseNameSelectResponses[keyof PostTestcasesByTestcaseNameSelectResponses];
+
+export type PutInitializeByTestidData = {
+    body: {
+        /**
+         * Start time (seconds since Jan 1st, 00:00:00) to initialize the simulation to.
+         */
+        start_time: number;
+        /**
+         * Warmup period in seconds.
+         */
+        warmup_period: number;
+    };
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/initialize/{testid}';
+};
+
+export type PutInitializeByTestidResponses = {
+    /**
+     * Simulation initialized successfully.
+     */
+    200: SimResponse;
+};
+
+export type PutInitializeByTestidResponse = PutInitializeByTestidResponses[keyof PutInitializeByTestidResponses];
+
+export type GetNameByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/name/{testid}';
+};
+
+export type GetNameByTestidResponses = {
+    /**
+     * Successful response with the test case name.
+     */
+    200: {
+        message?: string;
+        /**
+         * The payload containing the test case name.
+         */
+        payload?: {
+            /**
+             * The name of the test case.
+             */
+            name?: string;
+        };
+        status?: number;
+    };
+};
+
+export type GetNameByTestidResponse = GetNameByTestidResponses[keyof GetNameByTestidResponses];
+
+export type GetStatusByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/status/{testid}';
+};
+
+export type GetStatusByTestidResponses = {
+    /**
+     * Successful response with the test status.
+     */
+    200: string;
+};
+
+export type GetStatusByTestidResponse = GetStatusByTestidResponses[keyof GetStatusByTestidResponses];
+
+export type PutStopByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/stop/{testid}';
+};
+
+export type PutStopByTestidResponses = {
+    /**
+     * Successful response indicating the test was stopped. Returns the plain string "OK".
+     */
+    200: string;
+};
+
+export type PutStopByTestidResponse = PutStopByTestidResponses[keyof PutStopByTestidResponses];
+
+export type GetVersionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/version';
+};
+
+export type GetVersionResponses = {
+    /**
+     * Successful response with the version of BOPTEST.
+     */
+    200: {
+        message?: string;
+        /**
+         * Object containing the version string.
+         */
+        payload?: {
+            /**
+             * BOPTEST version string.
+             */
+            version?: string;
+        };
+        status?: number;
+    };
+};
+
+export type GetVersionResponse = GetVersionResponses[keyof GetVersionResponses];
 
 export type GetInputsByTestidData = {
     body?: never;
@@ -169,6 +403,130 @@ export type GetForecastPointsByTestidResponses = {
 
 export type GetForecastPointsByTestidResponse = GetForecastPointsByTestidResponses[keyof GetForecastPointsByTestidResponses];
 
+export type GetScenarioByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/scenario/{testid}';
+};
+
+export type GetScenarioByTestidResponses = {
+    /**
+     * Successful response with the scenario description.
+     */
+    200: {
+        message?: string;
+        payload?: {
+            [key: string]: string;
+        };
+        status?: number;
+    };
+};
+
+export type GetScenarioByTestidResponse = GetScenarioByTestidResponses[keyof GetScenarioByTestidResponses];
+
+export type PutScenarioByTestidData = {
+    /**
+     * Generic scenario payload.
+     */
+    body: {};
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/scenario/{testid}';
+};
+
+export type PutScenarioByTestidResponses = {
+    /**
+     * Successful response indicating the scenario was updated.
+     */
+    200: {
+        message?: string;
+        /**
+         * The applied scenario values (echo) or initial measurements if `time_period` triggers initialization.
+         */
+        payload?: {};
+        status?: number;
+    };
+};
+
+export type PutScenarioByTestidResponse = PutScenarioByTestidResponses[keyof PutScenarioByTestidResponses];
+
+export type GetStepByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/step/{testid}';
+};
+
+export type GetStepByTestidResponses = {
+    /**
+     * Successful response with the time step.
+     */
+    200: {
+        message?: string;
+        /**
+         * The time step used for control.
+         */
+        payload?: number;
+        status?: number;
+    };
+};
+
+export type GetStepByTestidResponse = GetStepByTestidResponses[keyof GetStepByTestidResponses];
+
+export type PutStepByTestidData = {
+    body: {
+        /**
+         * The new time step to set for control.
+         */
+        step?: number;
+    };
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/step/{testid}';
+};
+
+export type PutStepByTestidResponses = {
+    /**
+     * Successful response indicating the time step was updated.
+     */
+    200: {
+        message?: string;
+        /**
+         * Object containing the updated step value.
+         */
+        payload?: {
+            /**
+             * The new control time step that was set.
+             */
+            step: number;
+        };
+        status?: number;
+    };
+};
+
+export type PutStepByTestidResponse = PutStepByTestidResponses[keyof PutStepByTestidResponses];
+
 export type PutForecastByTestidData = {
     body: ForecastQuery;
     path: {
@@ -219,8 +577,38 @@ export type PutResultsByTestidResponses = {
 
 export type PutResultsByTestidResponse = PutResultsByTestidResponses[keyof PutResultsByTestidResponses];
 
+export type GetKpiByTestidData = {
+    body?: never;
+    path: {
+        /**
+         * The UUID of the test case.
+         */
+        testid: string;
+    };
+    query?: never;
+    url: '/kpi/{testid}';
+};
+
+export type GetKpiByTestidResponses = {
+    /**
+     * Successful response with KPIs.
+     */
+    200: {
+        message?: string;
+        /**
+         * Values for each keyed KPI. See KPIResponse schema for keyed KPIs and definitions.
+         */
+        payload?: {
+            [key: string]: unknown;
+        };
+        status?: number;
+    };
+};
+
+export type GetKpiByTestidResponse = GetKpiByTestidResponses[keyof GetKpiByTestidResponses];
+
 export type PostAdvanceByTestidData = {
-    body?: {
+    body: {
         [key: string]: number | 0 | 1;
     };
     path: {
@@ -237,202 +625,11 @@ export type PostAdvanceByTestidResponses = {
     /**
      * Successful response with simulation advancement results.
      */
-    200: {
-        message?: string;
-        payload?: {
-            [key: string]: number;
-        };
-        status?: number;
-    };
+    200: SimResponse;
 };
 
 export type PostAdvanceByTestidResponse = PostAdvanceByTestidResponses[keyof PostAdvanceByTestidResponses];
 
-export type GetNameByTestidData = {
-    body?: never;
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/name/{testid}';
-};
-
-export type GetNameByTestidResponses = {
-    /**
-     * Successful response with the test case name.
-     */
-    200: {
-        message?: string;
-        /**
-         * The payload containing the test case name.
-         */
-        payload?: {
-            /**
-             * The name of the test case.
-             */
-            name?: string;
-        };
-        status?: number;
-    };
-};
-
-export type GetNameByTestidResponse = GetNameByTestidResponses[keyof GetNameByTestidResponses];
-
-export type GetStepByTestidData = {
-    body?: never;
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/step/{testid}';
-};
-
-export type GetStepByTestidResponses = {
-    /**
-     * Successful response with the time step.
-     */
-    200: {
-        message?: string;
-        /**
-         * The time step used in the simulation.
-         */
-        payload?: number;
-        status?: number;
-    };
-};
-
-export type GetStepByTestidResponse = GetStepByTestidResponses[keyof GetStepByTestidResponses];
-
-export type PutStepByTestidData = {
-    body: {
-        /**
-         * The new time step to set for the simulation.
-         */
-        step?: number;
-    };
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/step/{testid}';
-};
-
-export type PutStepByTestidResponses = {
-    /**
-     * Successful response indicating the time step was updated.
-     */
-    200: {
-        message?: string;
-        /**
-         * Confirmation message.
-         */
-        payload?: string;
-        status?: number;
-    };
-};
-
-export type PutStepByTestidResponse = PutStepByTestidResponses[keyof PutStepByTestidResponses];
-
-export type GetScenarioByTestidData = {
-    body?: never;
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/scenario/{testid}';
-};
-
-export type GetScenarioByTestidResponses = {
-    /**
-     * Successful response with the scenario description.
-     */
-    200: {
-        message?: string;
-        payload?: {
-            [key: string]: string;
-        };
-        status?: number;
-    };
-};
-
-export type GetScenarioByTestidResponse = GetScenarioByTestidResponses[keyof GetScenarioByTestidResponses];
-
-export type GetKpiByTestidData = {
-    body?: never;
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/kpi/{testid}';
-};
-
-export type GetKpiByTestidResponses = {
-    /**
-     * Successful response with the KPIs.
-     */
-    200: {
-        message?: string;
-        payload?: {
-            [key: string]: number;
-        };
-        status?: number;
-    };
-};
-
-export type GetKpiByTestidResponse = GetKpiByTestidResponses[keyof GetKpiByTestidResponses];
-
-export type PutInitializeByTestidData = {
-    body: {
-        /**
-         * The start time of the simulation (epoch time).
-         */
-        start_time?: number;
-        /**
-         * The warmup period for the simulation in seconds.
-         */
-        warmup_period?: number;
-    };
-    path: {
-        /**
-         * The UUID of the test case.
-         */
-        testid: string;
-    };
-    query?: never;
-    url: '/initialize/{testid}';
-};
-
-export type PutInitializeByTestidResponses = {
-    /**
-     * Successful response indicating the simulation was initialized.
-     */
-    200: {
-        message?: string;
-        /**
-         * Confirmation message.
-         */
-        payload?: string;
-        status?: number;
-    };
-};
-
-export type PutInitializeByTestidResponse = PutInitializeByTestidResponses[keyof PutInitializeByTestidResponses];
-
 export type ClientOptions = {
-    baseUrl: 'http://localhost' | 'http://api.boptest.net' | (string & {});
+    baseUrl: 'http://127.0.0.1:8000' | 'http://api.boptest.net' | (string & {});
 };
